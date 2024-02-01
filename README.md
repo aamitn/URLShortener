@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/yourusername/your-repo.svg?branch=main)](https://travis-ci.org/yourusername/your-repo)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![GitHub last commit](https://img.shields.io/github/last-commit/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/aamitn/URLShortener.svg)](https://github.com/aamitn/your-repo/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/pulls)
+
 
 A powerful and scalable URL shortener with integrated bio pages built using Spring Boot.
 
