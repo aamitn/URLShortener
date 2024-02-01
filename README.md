@@ -2,9 +2,12 @@
 
 [![Build Status](https://travis-ci.org/yourusername/your-repo.svg?branch=main)](https://travis-ci.org/yourusername/your-repo)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
-[![GitHub last commit](https://img.shields.io/github/last-commit/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/aamitn/URLShortener.svg)](https://github.com/aamitn/your-repo/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/pulls)
+[![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/your-repo.svg)](https://github.com/yourusername/your-repo/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/yourusername/your-repo.svg)](https://github.com/yourusername/your-repo/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/your-repo.svg)](https://github.com/yourusername/your-repo/pulls)
+[![GitHub contributors](https://img.shields.io/github/contributors/yourusername/your-repo.svg)](https://github.com/yourusername/your-repo/graphs/contributors)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/yourusername/your-repo.svg?style=social)](https://twitter.com/intent/tweet?url=https%3A%2F%2Fgithub.com%2Fyourusername%2Fyour-repo&text=Check%20out%20this%20awesome%20URL%20Shortener%20and%20Bio%20Page%20Application&via=yourtwitterhandle)
+
 
 
 A powerful and scalable URL shortener with integrated bio pages built using Spring Boot.
