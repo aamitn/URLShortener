@@ -1,0 +1,195 @@
+<!-- bio.html -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Page</title>
+    <!-- Include the latest version of TUI Editor -->
+
+    <script th:src="@{/js/ckeditor/build/ckeditor.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<h1>Bio Page</h1>
+
+<div style="display: flex; justify-content: space-between;">
+    <!-- Left side: Display existing content -->
+    <div id="existingBioContent" style="width: 48%; border: 1px solid #ccc; padding: 10px;"></div>
+
+    <!-- Right side: WYSIWYG editor and update button -->
+    <div style="width: 48%;">
+        <div id="editor"></div>
+        <button onclick="updateBioContent()">Update Content</button>
+    </div>
+</div>
+
+
+<script>
+    var editor;
+    var data;
+
+    // Function to fetch and display bio content
+    function showBioContent() {
+        const shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+        // Fetch bio content using the API endpoint
+        axios.get('/api/url/bio/content', {
+            params: {
+                shortUrl: shortUrl
+            }
+        })
+            .then(function (response) {
+                // Update the left side with the retrieved bio content
+                document.getElementById('existingBioContent').innerHTML = response.data;
+                localStorage.setItem("data", response.data);
+
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+
+    }
+    function initEditor() {
+
+
+        ClassicEditor.
+        create(document.querySelector('#editor'),{
+
+            toolbar: [ 'alignment:left', 'alignment:right', 'alignment:center', 'alignment:justify', 'alignment', 'undo', 'redo', 'blockQuote', 'bold', 'code', 'codeBlock', 'selectAll', 'findAndReplace', 'fontBackgroundColor', 'fontColor', 'fontFamily', 'fontSize', 'heading', 'highlight:yellowMarker', 'highlight:greenMarker', 'highlight:pinkMarker', 'highlight:blueMarker', 'highlight:redPen', 'highlight:greenPen', 'removeHighlight', 'highlight', 'horizontalLine', 'htmlEmbed', 'imageTextAlternative', 'insertImage', 'imageInsert', 'toggleImageCaption', 'uploadImage', 'imageUpload', 'resizeImage', 'imageResize', 'imageStyle:inline', 'imageStyle:alignLeft', 'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:alignBlockLeft', 'imageStyle:alignBlockRight', 'imageStyle:block', 'imageStyle:side', 'imageStyle:wrapText', 'imageStyle:breakText', 'indent', 'outdent', 'italic', 'link', 'linkImage', 'numberedList', 'bulletedList', 'mediaEmbed', 'pageBreak', 'removeFormat', 'showBlocks', 'sourceEditing', 'specialCharacters', 'restrictedEditingException', 'strikethrough', 'style', 'subscript', 'superscript', 'insertTable', 'tableColumn', 'tableRow', 'mergeTableCells', 'toggleTableCaption', 'tableCellProperties', 'tableProperties', 'textPartLanguage', 'todoList'],
+
+            image: {
+                toolbar: [ 'imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative' ],
+            },
+            autosave: {
+                save( editor ) {
+                    // The saveData() function must return a promise
+                    // which should be resolved when the data is successfully saved.
+                    return saveData( editor.getData() );
+                }
+            },
+            extraPlugins: [CustomUploadAdapterPlugin],
+            outputType: 'html',
+
+        })
+            .then(createdEditor => {
+
+                console.log('Editor initialized:', createdEditor);
+                editor = createdEditor;
+                // Set custom content
+                editor.setData(localStorage.getItem("data"));
+                editor.getData();
+                console.log( Array.from( editor.ui.componentFactory.names() ) );
+
+            })
+            .catch(error => {
+                console.error('Error initializing editor:', error);
+            });
+
+    }
+
+    // Call the function to show bio content when the page loads
+    showBioContent();
+
+    //INIT EDITOR
+    initEditor();
+
+    // Function to update bio content
+    function updateBioContent() {
+        const shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+        const updatedContent = editor.getData({ outputType: 'htmlWithStyles' });
+
+        // Send a PUT request to update the bio content
+        axios.put('/api/url/bio/edit', { customHtmlContent: updatedContent }, {
+            params: {
+                shortUrl: shortUrl,
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(function (response) {
+                // Call showBioContent after updating the content
+                showBioContent();
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+    }
+
+
+    // Custom CKEditor upload adapter
+    class CustomUploadAdapter {
+        constructor(loader, url) {
+            this.loader = loader;
+            this.url = url;
+        }
+
+        readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                if (!(file instanceof Blob)) {
+                    reject(new Error('The provided file is not a valid Blob.'));
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+
+        upload() {
+            return new Promise(async (resolve, reject) => {
+                // Wait for the Promise to resolve and get the File object
+                const file = await this.loader.file;
+
+                // Print the contents of the resolved File object for debugging
+                console.log('Resolved Loader file:', file);
+
+                var data = new FormData();
+                data.append('image', file);
+
+                // Replace 'YOUR_IMGBB_API_KEY' with your actual ImgBB API key
+                await fetch('https://api.imgbb.com/1/upload?expiration=600&key=7e5903f9e071c78ac15ba63d7c504c6e', {
+                    method: 'POST',
+                    body: data,
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            resolve({ default: result.data.url });
+                        } else {
+                            reject(result.error.message);
+                        }
+                    })
+                    .catch(error => {
+                        reject(`Upload failed: ${error.message}`);
+                    });
+            });
+        }
+
+        abort() {
+            // Implement the abort method if needed
+        }
+    }
+
+    function CustomUploadAdapterPlugin(editor, url) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            // Customize the URL if needed (e.g., append additional query parameters)
+            return new CustomUploadAdapter(loader, url);
+        };
+    }
+
+</script>
+</body>
+</html>

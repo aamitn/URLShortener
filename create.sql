@@ -1,0 +1,5 @@
+create table analytics (redirection_time float(53), analytics_id bigint not null auto_increment, url_shortener_id bigint not null, accept_language varchar(255), accept_types varchar(255), device_ip varchar(255), device_type varchar(255), timestamp varchar(255), timezone varchar(255), primary key (analytics_id)) engine=InnoDB;
+create table url_shortener (created_at DATE, hits bigint, id bigint not null auto_increment, unique_hits bigint, user_id bigint, qr_code varchar(2048), bio_content TEXT, link_type varchar(255), original_url varchar(255), short_url varchar(255), primary key (id)) engine=InnoDB;
+create table user_entity (account_non_expired bit, account_non_locked bit, credentials_non_expired bit, enabled bit, user_id bigint not null auto_increment, email varchar(255) not null, first_name varchar(255), last_name varchar(255), password varchar(255) not null, username varchar(255) not null, primary key (user_id)) engine=InnoDB;
+alter table user_entity add constraint UK_2jsk4eakd0rmvybo409wgwxuw unique (username);
+alter table analytics add constraint FK1imt48hd0qslhxwt2gcoh92h1 foreign key (url_shortener_id) references url_shortener (id);

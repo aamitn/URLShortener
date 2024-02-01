@@ -1,0 +1,247 @@
+<!-- bio.html -->
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Page</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tiny.cloud/1/76e60dpqcmsff1kdtj7qbc1v4cte8v8s410uw4mbe1lysds2/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+<body class="bg-gray-100">
+<!-- src/main/resources/templates/fragments/_navbar.html -->
+
+<div id="navbar" xmlns:sec="http://www.w3.org/1999/xhtml" class="flex flex-nowrap bg-gray-800 text-white py-4">
+
+
+    <!-- Company Logo with SVG -->
+    <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" class="w-8 h-8 mr-2">
+            <!-- Your SVG path here -->
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2zm0-8h2v-2h-2z" />
+        </svg>
+    </div>
+
+    <!-- Left side navigation links with icons -->
+    <ul class="flex justify-start space-x-4 items-center">
+        <li>
+            <a th:href="@{/}" class="flex items-center">
+                <i class="fas fa-home mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Home</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/contact}" class="flex items-center">
+                <i class="fas fa-envelope mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Contact Us</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/api-docs}" class="flex items-center">
+                <i class="fas fa-book mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">API Docs</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/monitoring}" class="flex items-center">
+                <i class="fas fa-book mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Health</span>
+            </a>
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}" class="flex items-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Logout</span>
+            </a>
+        </li>
+
+    </ul>
+
+
+    <!-- Login Button -->
+    <a sec:authorize="isAnonymous()" th:href="@{/login}" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300">Login</a>
+
+    <!-- Register Button -->
+    <a sec:authorize="isAnonymous()" th:href="@{/register}" class="bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-700 transition duration-300">Register</a>
+</div>
+
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-8 text-center">Edit Bio Page</h1>
+
+    <div class="flex justify-between">
+        <!-- Left side: Display existing content -->
+        <div id="existingBioContent" class="w-1/2 border p-4">
+            <!-- Content will be displayed here -->
+        </div>
+
+        <!-- Right side: WYSIWYG editor and update button -->
+        <div class="w-1/2">
+            <div id="editor" class="mt-4"></div>
+            <button onclick="updateBioContent()" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none">
+                Update Content
+            </button>
+        </div>
+    </div>
+</div>
+<div th:replace="layouts/footerLayout"></div>
+<script>
+    var editor;
+    var data;
+    const shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+    // Function to fetch and display bio content
+
+    // Fetch bio content using the API endpoint
+    function showBioContent() {
+        axios.get('/api/url/bio/content', {
+            params: {
+                shortUrl: shortUrl
+            }
+        })
+            .then(function (response) {
+                // Update the left side with the retrieved bio content
+                document.getElementById('existingBioContent').innerHTML = response.data;
+                localStorage.setItem("data", response.data);
+
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+    }
+
+    // Define the image upload handler function
+
+
+
+    function imageUploadHandler (blobInfo, success, failure, progress) {
+        var xhr, formData;
+
+        xhr = new XMLHttpRequest();
+        xhr.withCredentials = false;
+        xhr.open('POST', '/api/images/upload');
+
+        xhr.upload.onprogress = function (e) {
+            progress(e.loaded / e.total * 100);
+        };
+
+        xhr.onload = function() {
+            var json;
+
+            if (xhr.status === 403) {
+                failure('HTTP Error: ' + xhr.status, { remove: true });
+                return;
+            }
+
+            if (xhr.status < 200 || xhr.status >= 300) {
+                failure('HTTP Error: ' + xhr.status);
+                return;
+            }
+
+            json = JSON.parse(xhr.responseText);
+
+            if (!json || typeof json.location != 'string') {
+                failure('Invalid JSON: ' + xhr.responseText);
+                return;
+            }
+
+            success(json.location);
+        };
+
+        xhr.onerror = function () {
+            failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+        };
+
+        formData = new FormData();
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+        xhr.send(formData);
+    };
+
+
+    function initEditor() {
+        //const shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+        tinymce.init({
+            selector: '#editor',
+            height: 500,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount',
+            ],
+            toolbar: 'undo redo | formatselect | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+
+            file_picker_types: 'image',
+            images_upload_url: '/api/images/upload',
+            images_upload_handler: imageUploadHandler,
+
+
+            setup: function (editor) {
+                editor.on('init', function () {
+                    // Fetch bio content using the API endpoint
+                    axios.get('/'+shortUrl, {
+
+                    })
+                        .then(function (response) {
+                            // Set custom content
+                            editor.setContent(response.data);
+                        })
+                        .catch(function (error) {
+                            console.error('Error:', error.response.data);
+                            // Handle errors as needed, e.g., display an error message
+                        });
+                });
+
+                editor.on('change', function () {
+                    // Handle content change
+                });
+            },
+        });
+    }
+
+    // Call the function to show bio content when the page loads
+    showBioContent();
+
+    //INIT EDITOR
+    initEditor();
+
+    // Function to update bio content
+    function updateBioContent() {
+       // const shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+        const updatedContent = tinymce.get('editor').getContent();
+
+        // Send a PUT request to update the bio content
+        axios.put('/api/url/bio/edit', { customHtmlContent: updatedContent }, {
+            params: {
+                shortUrl: shortUrl,
+            },
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(function (response) {
+                // Call showBioContent after updating the content
+               showBioContent();
+               // document.getElementById('bioframeleft').src;
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+    }
+
+
+
+</script>
+</body>
+</html>

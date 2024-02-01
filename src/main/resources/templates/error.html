@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${errorTitle}">Error</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="h-screen font-sans">
+
+<!-- Modal -->
+<div class="modal fade" id="contactSupportModal" tabindex="-1" role="dialog" aria-labelledby="contactSupportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactSupportModalLabel">Contact Support</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Your form goes here -->
+                <form id="supportForm">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message:</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="min-h-full flex items-center justify-center">
+    <div class="container mx-auto p-4 flex flex-col items-center justify-center">
+        <svg class="w-64 h-64 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+            <!-- Background circle representing the connection status -->
+            <circle cx="100" cy="100" r="90" stroke="#F5A623" stroke-width="10" fill="none" />
+
+            <!-- Person figure -->
+            <rect x="90" y="60" width="20" height="40" fill="#333" /> <!-- Body -->
+            <circle cx="100" cy="55" r="10" fill="#333" /> <!-- Head -->
+            <line x1="95" y1="100" x2="85" y2="120" stroke="#333" stroke-width="4" /> <!-- Left arm -->
+            <line x1="105" y1="100" x2="115" y2="120" stroke="#333" stroke-width="4" /> <!-- Right arm -->
+
+            <!-- Cable and plug -->
+            <line x1="100" y1="100" x2="100" y2="130" stroke="#333" stroke-width="4" /> <!-- Cable -->
+            <circle cx="100" cy="140" r="8" fill="#333" /> <!-- Plug -->
+
+            <!-- "No connection" symbol -->
+            <line x1="58" y1="152" x2="142" y2="152" stroke="#F5A623" stroke-width="10" fill="none" />
+            <line x1="95" y1="105" x2="145" y2="45" stroke="#F5A623" stroke-width="10" fill="none" />
+        </svg>
+
+        <h1 th:text="${errorTitle}" class="text-4xl font-bold text-red-500 mt-4">Error</h1>
+
+        <div class="mt-4 bg-white rounded-lg shadow-md p-4">
+            <p class="text-xl font-bold mb-2">Code: <span th:text="${errorCode}" class="text-blue-600"></span></p>
+            <p class="text-lg mb-4">Message: <span th:text="${errorMessage}" class="text-gray-700"></span></p>
+            <p>Request path: <span th:text="${requestUri}" class="text-gray-600"></span></p>
+            <p>Downstream Servlet: <span th:text="${servletName}" class="text-gray-600"></span></p>
+
+            <div class="mt-4">
+                <a href="#"  id="supportbtn" class="btn btn-primary">Contact Support</a>
+                <a href="#"  id="statusButton" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Click to check">Check Status</a>
+            </div>
+
+        </div>
+        <div class="mx-auto p-4">
+            <span id="statusPill" class="rounded-full px-3 text-white text-center d-none d-flex justify-content-center align-items-center"></span>
+        </div>
+        <a th:href="@{/}" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Go Back</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+<script>
+    // Fetch server status and update tooltip
+    const statusButton = document.getElementById('statusButton');
+    const statusPill = document.getElementById('statusPill');
+
+    statusButton.addEventListener('click', () => {
+        fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                statusPill.classList.remove('d-none'); // Show the pill
+                statusPill.classList.remove('bg-green-500', 'bg-red-500'); // Clear previous colors
+                statusPill.classList.add(data.server_status === 1 ? 'bg-green-500' : 'bg-red-500'); // Add color based on status
+                statusPill.textContent = data.server_status === 1 ? 'Online' : 'Offline';
+            })
+            .catch(error => {
+                console.error('Error fetching server status:', error);
+                statusPill.classList.remove('d-none'); // Show the pill
+                statusPill.classList.add('bg-red-500'); // Set red color
+                statusPill.textContent = 'Offline/LinkDown';
+            });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const contactSupportBtn = document.getElementById('supportbtn');
+        const contactSupportModal = new bootstrap.Modal(document.getElementById('contactSupportModal'));
+
+        // Event listener for opening the modal
+        contactSupportBtn.addEventListener('click', function () {
+            contactSupportModal.show();
+        });
+
+        // Event listener for form submission
+        document.getElementById('supportForm').addEventListener('submit', function (event) {
+            // Handle form submission logic here
+
+            // Close the modal after form submission
+            contactSupportModal.hide();
+
+            // Prevent the default form submission
+            event.preventDefault();
+        });
+
+        // Event listener for Cancel button
+        cancelBtn.addEventListener('click', function () {
+            // Close the modal when Cancel button is clicked
+            contactSupportModal.hide();
+        });
+    });
+</script>
+</body>
+<div th:replace="layouts/footerLayout"></div>
+</html>

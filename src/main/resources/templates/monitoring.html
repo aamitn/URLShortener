@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Panel</title>
+    <!-- Include Tailwind CSS styles -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+<!-- Include the navbar from mainlayout -->
+<div th:replace="layouts/mainLayout"></div>
+<div class="container mx-auto p-4">
+
+    <h1 class="text-3xl font-bold mb-4">Monitoring Panel</h1>
+
+    <h2 class="text-xl mb-2">Actuator Endpoints</h2>
+
+    <!-- Show Endpoints -->
+    <ul class="flex space-x-4 mb-4">
+        <li>
+            <a th:href="@{/actuator/health}" class="bg-blue-500 text-white px-4 py-2 rounded flex items-center">
+                <i class="fas fa-heart mr-2"></i>
+                Health
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/actuator/info}" class="bg-blue-500 text-white px-4 py-2 rounded flex items-center">
+                <i class="fas fa-search mr-2"></i>
+                Info
+            </a>
+        </li>
+        <!-- Add more endpoints as needed with similar structure -->
+    </ul>
+
+
+
+
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Left Card: Component Status -->
+        <div class="w-full bg-white p-4 rounded shadow mb-4">
+        <h2 class="text-xl font-bold mb-2">Component Status</h2>
+        <div class="flex flex-wrap gap-4">
+            <!-- App Component -->
+            <div class="p-2 rounded border" id="appPill">
+                    <span class="text-white font-bold px-2 py-1 rounded">
+                        App: <span id="appStatus"></span>
+                    </span>
+            </div>
+
+            <!-- Database Component -->
+            <div class="p-2 rounded border" id="dbPill">
+                    <span class="text-white font-bold px-2 py-1 rounded">
+                        Database: <span id="dbStatus"></span>
+                    </span>
+            </div>
+
+            <!-- Disk Space Component -->
+            <div class="p-2 rounded border" id="diskSpacePill">
+                    <span class="text-white font-bold px-2 py-1 rounded">
+                        Disk Space: <span id="diskSpaceStatus"></span>
+                    </span>
+            </div>
+
+            <!-- Mail Component -->
+            <div class="p-2 rounded border" id="mailPill">
+                    <span class="text-white font-bold px-2 py-1 rounded">
+                        Mail: <span id="mailStatus"></span>
+                    </span>
+            </div>
+
+            <!-- Ping Component -->
+            <div class="p-2 rounded border" id="pingPill">
+                    <span class="text-white font-bold px-2 py-1 rounded">
+                        Ping: <span id="pingStatus"></span>
+                    </span>
+            </div>
+        </div>
+            <!-- Display Actuator health status using JS fetch -->
+            <div class="bg-white p-4 rounded shadow mb-4">
+                <h2 class="text-xl font-bold mb-2">Health Information (Fetched with JS)</h2>
+                <pre id="healthDataContainer" class="overflow-auto max-h-96"></pre>
+            </div>
+    </div>
+
+    <!-- Right Card: Disk Space Chart -->
+        <div class="w-full bg-white p-4 rounded shadow mb-4">
+        <h2 class="text-xl font-bold mb-2">Disk Space Information (Fetched with JS)</h2>
+        <canvas id="diskSpaceChart" width="400" height="200"></canvas>
+    </div>
+</div>
+    <!-- Display Actuator Info -->
+    <div class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="text-xl font-bold mb-2">Info</h2>
+        <pre th:text="${infoData}"></pre>
+    </div>
+</div>
+
+
+
+    <!-- Add more sections for other Actuator endpoints as needed -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Fetch health data using JS fetch
+        fetch('/actuator/health')
+            .then(response => response.json())
+            .then(data => {
+                // Update the content of the healthDataContainer with the fetched data
+                document.getElementById('healthDataContainer').innerText = JSON.stringify(data, null, 2);
+
+                // Parse JSON data
+                var json = JSON.parse(JSON.stringify(data));
+
+                // Update Component Status
+                updateComponentStatus('app', json.components && json.components.custom);
+                updateComponentStatus('db', json.components && json.components.db);
+                updateComponentStatus('diskSpace', json.components && json.components.diskSpace);
+                updateComponentStatus('mail', json.components && json.components.mail);
+                updateComponentStatus('ping', json.components && json.components.ping);
+
+                // Extract disk space information
+                const diskSpace = json.components && json.components.diskSpace;
+
+                // Prepare data for pie chart
+                if (diskSpace && diskSpace.status === 'UP' && diskSpace.details) {
+                    const free = diskSpace.details.free;
+                    const total = diskSpace.details.total;
+
+                    console.log(free/100000);
+                    console.log(total/100000);
+
+                    // Create a disk space pie chart using Chart.js
+                    const ctx = document.getElementById('diskSpaceChart').getContext('2d');
+                    const diskSpaceChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Total Space', 'Free Space'],
+                            datasets: [{
+                                data: [total, free],
+                                backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(75, 192, 192, 0.7)'],
+                                borderWidth: 2
+                            }]
+                        }
+                    });
+                } else {
+                    console.error('Error: Disk space data not available or status is not UP.');
+                }
+            })
+            .catch(error => console.error('Error fetching health data:', error));
+
+
+        // Function to update component status
+        function updateComponentStatus(componentId, component) {
+            const statusSpan = document.getElementById(`${componentId}Status`);
+            const pillDiv = document.getElementById(`${componentId}Pill`);
+
+            if (component) {
+                statusSpan.innerText = component.status;
+
+                // Update pill color based on status
+                pillDiv.classList.remove('bg-green-500', 'bg-red-500'); // Remove existing classes
+                if (component.status === 'UP') {
+                    pillDiv.classList.add('bg-green-500'); // Add green background for UP status
+                } else {
+                    pillDiv.classList.add('bg-red-500'); // Add red background for non-UP status
+                }
+            } else {
+                statusSpan.innerText = 'N/A'; // Set to a default value if not available
+                pillDiv.classList.remove('bg-green-500', 'bg-red-500'); // Remove existing classes
+            }
+        }
+    </script>
+
+</div>
+<div th:replace="layouts/footerLayout"></div>
+</body>
+</html>

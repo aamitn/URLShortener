@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- Add your other stylesheets and scripts here -->
+    <style>
+        #result {
+            resize: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<div th:replace="layouts/mainLayout"></div>
+
+<div sec:authorize="isAnonymous()" class="flex justify-center">
+    <!-- LandingPage -->
+    <div th:replace="layouts/homeLayout"></div>
+</div>
+
+<!-- Tabs -->
+<div sec:authorize="isAuthenticated()" class="flex justify-center">
+    <div class="flex space-x-4 bg-white p-4 mb-4">
+        <button class="px-4 py-2 bg-blue-500 text-white rounded focus:outline-none" onclick="showSection('section1')">Shorten</button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded focus:outline-none" onclick="showSection('section2')">Bio-Link</button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded focus:outline-none" onclick="showSection('section3')">Profile</button>
+        <!-- Add more tabs as needed -->
+    </div>
+</div>
+</div>
+
+<div sec:authorize="isAuthenticated()">
+<div id="section1"  class="max-w-3xl mx-auto bg-white p-8 shadow rounded">
+    <!-- Section for Link 1 content -->
+    <div sec:authorize="hasAnyAuthority('ROLE_USER', 'OAUTH2_USER')">
+        <h2 class="text-2xl font-semibold mb-4">Shorten Form</h2>
+        <!-- Section for generating short URLs -->
+        <div class="mb-8">
+            <form id="shortenForm" class="flex items-center space-x-4">
+                <input type="text" id="originalUrl" placeholder="Enter the original URL" required
+                       class="px-4 py-2 border border-gray-300 rounded focus:outline-none">
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded focus:outline-none">Shorten</button>
+            </form>
+            <!-- Display the result within the same page -->
+            <div id="shortenError" class="mt-4" style="color: red;"></div>
+            <div id="shortenInfo" class="mt-4" style="color: green;"></div>
+          <div id="resultdiv">
+                <label for="result" class="sr-only">Your ShortUrl</label>
+              <span>Short Url:</span>
+                <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <button id="clipboardShorten" type="button" class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                        <i class="fa-solid fa-clipboard"></i>
+                        <span class="sr-only">Copy to Clipboard</span>
+                    </button>
+                    <textarea id="result" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..." readonly></textarea>
+                    <button id="shortenDetails" type="submit" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                        <i class="fa fa-cog" aria-hidden="true"></i>
+                        <span class="sr-only">Settings</span>
+                    </button>
+                </div>
+          </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- Section for Link 2 content -->
+<div sec:authorize="isAuthenticated()">
+<div id="section2" class="max-w-3xl mx-auto bg-white p-8 shadow rounded">
+    <div sec:authorize="hasAnyAuthority('ROLE_USER', 'OAUTH2_USER')">
+        <h2 class="text-2xl font-semibold mb-4">Bio Form</h2>
+        <!-- Section for generating short URLs -->
+        <div class="mb-8">
+            <form id="bioForm" class="flex items-center space-x-4">
+                <textarea id="htmlData" rows="2" class="block mx-4 p-2.5 w-3/4 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your Bio Page Content..." ></textarea>
+                <p></p>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded focus:outline-none">Create Bio</button>
+            </form>
+            <!-- Display the result within the same page -->
+            <div id="bioError" class="mt-4" style="color: red;"></div>
+            <div id="bioInfo" class="mt-4" style="color: green;"></div>
+            <div id="resultdivBio">
+                <label for="resultBio" class="sr-only">Your BioPage</label>
+                <span>Bio Page:</span>
+                <div class="flex items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <button id ="clipboardBio" type="button" class="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600">
+                        <i class="fa-solid fa-clipboard"></i>
+                        <span class="sr-only">Copy to Clipboard</span>
+                    </button>
+                    <textarea id="resultBio" rows="1" class="block mx-4 p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..." readonly></textarea>
+                    <button id="bioDetails" type="submit" class="inline-flex justify-center p-2 text-blue-600 rounded-full cursor-pointer hover:bg-blue-100 dark:text-blue-500 dark:hover:bg-gray-600">
+                        <i class="fa fa-cog" aria-hidden="true"></i>
+                        <span class="sr-only">Settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Section for Link 3 content -->
+<div sec:authorize="isAuthenticated()">
+<div id="section3"  class="max-w-3xl mx-auto bg-white p-8 shadow rounded">
+    <div sec:authorize="hasAnyAuthority('ROLE_USER', 'OAUTH2_USER')">
+        <h2 class="text-2xl font-semibold mb-4">Profile Details</h2>
+        <!-- Section for generating short URLs -->
+        <div class="mb-8">
+            <!-- Section for logged-in user details -->
+            <div class="mb-8" sec:authorize="isAuthenticated()">
+                <div class="flex items-center space-x-4 mb-4">
+                    <img th:src="@{/api/user/profile-picture?username=}+${user.username}" alt="Profile Picture"
+                         class="w-16 h-16 rounded-full border-2 border-blue-500">
+                    <div>
+                        <h2 class="text-2xl font-semibold" th:text="${user.username}"></h2>
+                        <p th:text="${user.email}"></p>
+                    </div>
+                </div>
+
+                <!-- Additional user details -->
+                <div id="userDetails">
+                    <p><strong>UserID:</strong> <span th:text="${user.userId}"></span></p>
+                    <p><strong>Username:</strong> <span id="usernameSpan" th:text="${user.username}"></span></p>
+                    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                    <p><strong>First Name:</strong> <span th:text="${user.firstName}"></span></p>
+                    <p><strong>Last Name:</strong> <span th:text="${user.lastName}"></span></p>
+                    <p><strong>Phone Number:</strong> <span th:text="${user.phoneNumber}"></span></p>
+                    <p><strong>Enabled:</strong> <span th:text="${user.enabled}"></span></p>
+                    <p><strong>Non-Locked:</strong> <span th:text="${user.accountNonLocked}"></span></p>
+                    <p><strong>Password:</strong> <span th:text="${userelevated.password}"></span></p>
+                    <p><strong>Profile Picture Bytes:</strong> <span th:text="${userelevated.profilePicture}"></span></p>
+                </div>
+            </div>
+            <!-- Display the result within the same page -->
+            <button class="px-4 py-2 bg-blue-500 text-white rounded focus:outline-none" onclick="goToProfilePage()">Edit Profile</button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<!-- Content -->
+<div sec:authorize="isAuthenticated()">
+<div class="max-w-8xl mx-auto bg-white p-8 shadow rounded" >
+    <div id="section25" class="mb-4">
+    <h2 class="text-2xl font-semibold mb-4">Your Urls and Bios</h2>
+    <!-- Table to display user URLs -->
+    <table id="urlsTable" class="w-full table-auto">
+        <!-- Table headers and body -->
+        <thead>
+        <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Original URL</th>
+            <th>Short URL</th>
+            <th>type</th>
+            <th>hits</th>
+            <th>uhits</th>
+            <th>ActionDelete</th>
+            <th>ActionCopy</th>
+            <th>ActionShare</th>
+            <th>ActionEditInfo</th>
+            <th>QRButton</th>
+            <th>QRImage</th>
+        </tr>
+        </thead>
+        <tbody id="urlsTableBody"></tbody>
+    </table>
+    </div>
+    <!-- Add more content divs as needed -->
+</div>
+</div>
+<div th:replace="layouts/footerLayout"></div>
+<!-- Set username as a global variable in JavaScript -->
+<script th:inline="javascript" sec:authorize="isAuthenticated()">
+    var username = /*[[${#authentication.principal.username}]]*/ '';
+    /*<![CDATA[*/
+    // var username = /*[[${user.username}]]*/ ;
+    console.log("Loggedin As:" + username);
+    /*]]>*/
+</script>
+<script th:inline="javascript">
+    function showSection(sectionId) {
+        // Hide all sections
+        document.getElementById('section1').style.display = 'none';
+        document.getElementById('section2').style.display = 'none';
+        document.getElementById('section3').style.display = 'none';
+
+        // Show the selected section
+        document.getElementById(sectionId).style.display = 'block';
+    }
+    showSection('section1');
+</script>
+<!-- Scripts -->
+<script th:src="@{/js/shorten.js}"></script>
+</body>
+</html>

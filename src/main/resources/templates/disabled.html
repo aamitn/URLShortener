@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disabled Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- Add Flowbite CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite@2.1.1/dist/flowbite.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <style>
+
+        /* Your existing styles */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            animation: fadeInUp 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #f87171;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        p {
+            color: #4a5568;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        svg {
+            margin-top: 2rem;
+            max-width: 100%;
+            height: auto;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+
+
+        /* Add Flowbite styles */
+        .container {
+            @apply px-8 py-6 rounded-lg bg-white shadow-md opacity-0 animation-infinite animation-bounce;
+        }
+
+        h2 {
+            @apply text-red-500 text-3xl font-bold mb-4;
+        }
+
+        p {
+            @apply text-gray-600 text-lg mb-4;
+        }
+
+        span {
+            @apply text-blue-500;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Page Disabled</h2>
+    <p>This page has been disabled.</p>
+    <p>Short URL created by: <span th:text="${creatorName}"></span></p>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12" y2="16"></line>
+    </svg>
+    <button type="button" id="homeButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <i class="fas fa-home w-3.5 h-3.5 me-2"></i>
+        Home
+    </button>
+</div>
+<script>
+    document.getElementById('homeButton').addEventListener('click', function () {
+        window.location.href = '/';
+    });
+</script>
+</body>
+<div th:replace="layouts/footerLayout"></div>
+</html>

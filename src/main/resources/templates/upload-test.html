@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Page</title>
+
+    <!-- Include GrapesJS styles -->
+    <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+
+    <!-- Include GrapesJS scripts -->
+    <script src="https://unpkg.com/grapesjs"></script>
+
+    <!-- Your custom styles -->
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+
+        #gjs {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+<h1>Bio Page</h1>
+
+<!-- GrapesJS editor container -->
+<div id="gjs"></div>
+
+<script>
+    // Initialize GrapesJS
+    const editor = grapesjs.init({
+        container: '#gjs',
+        fromElement: true,
+        components: '<div>Hello World!</div>',
+        style: '.test { color: red }',
+        storageManager: false, // Disable storage manager for simplicity
+        plugins: ['gjs-preset-webpage'],
+        pluginsOpts: {
+            'gjs-preset-webpage': {
+                blocks: ['link-block', 'quote', 'text-basic'],
+            },
+        },
+    });
+
+    // Event listener for changes
+    editor.on('component:update', (model) => {
+        // Handle component update
+        console.log('Component updated:', model);
+    });
+</script>
+</body>
+</html>

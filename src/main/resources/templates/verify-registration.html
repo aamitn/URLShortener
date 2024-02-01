@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<!-- Include the navbar from mainlayout -->
+<div th:replace="layouts/mainLayout"></div>
+
+<div class="container mx-auto p-4 flex justify-center items-center h-screen">
+    <div class="w-full max-w-md bg-white p-6 rounded-md shadow-md">
+        <h2 class="text-2xl font-semibold mb-4">Email Verification</h2>
+        <p>Please enter the OTP received in your email to complete the registration:</p>
+
+        <!-- Error Alert -->
+        <div id="error"
+             class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4 hidden" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline" th:text="${error}"></span>
+        </div>
+
+        <form id="otpForm" action="" method="post" class="mt-4">
+            <div class="mb-4">
+                <label for="otp" class="block text-sm font-medium text-gray-600">OTP:</label>
+                <input type="text" id="otp" name="otp" required
+                       class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            <div class="mb-4">
+                <!-- Verify Button -->
+                <button type="button" onclick="verifyRegistration()"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                    Verify
+                </button>
+
+            </div>
+            <div class="flex justify-center items-center mb-4">
+                <!-- Button to redirect to the home page -->
+                <button onclick="window.location.href='/'"
+                        class="px-4 py-2 text-sm font-semibold text-gray-600 bg-blue-500 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring focus:ring-blue-200">
+                    Go Home
+                </button>
+            </div>
+
+            <!-- Info Alert -->
+            <div id="info"
+                 class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3 rounded relative mt-4 hidden"
+                 role="alert">
+                <strong class="font-bold">Info!</strong>
+                <span class="block sm:inline" th:text="${info}"></span>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:replace="layouts/footerLayout"></div>
+<script>
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    // Get the email parameter from the URL
+    const email = getQueryParam('email');
+    document.getElementById('otpForm').insertAdjacentHTML('beforeend',
+        `<input type="hidden" name="email" value="${email}">`);
+
+    function verifyRegistration() {
+        const otp = document.getElementById('otp').value;
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `http://localhost:8080/verify-registration?otp=${otp}&email=${email}`,
+        };
+
+        // Hide error and info alerts initially
+        document.getElementById('error').classList.add('hidden');
+        document.getElementById('info').classList.add('hidden');
+
+        axios.request(config)
+            .then((response) => {
+                document.getElementById('info').innerHTML = response.data;
+                document.getElementById('info').classList.remove('hidden');
+                window.location.href = "/login";
+            })
+            .catch((error) => {
+                document.getElementById('error').innerHTML = "<p>Error: " + error.response.data + "</p>";
+                document.getElementById('error').classList.remove('hidden');
+            });
+    }
+</script>
+
+</body>
+
+</html>

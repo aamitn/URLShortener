@@ -1,0 +1,148 @@
+<!-- src/main/resources/templates/register.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/5.15.3/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/webjars/tailwindcss/2.2.19/dist/tailwind.min.css}" />
+    <style>
+        @keyframes gradientAnimation1 {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes gradientAnimation2 {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            background: linear-gradient(135deg, #3498db, #5dade2, #85c1e9, #aed6f1, #d6eaf8);
+            background-size: 400% 400%;
+            animation: gradientAnimation1 6s infinite, gradientAnimation2 8s infinite;
+        }
+        body.loading {
+            pointer-events: none; /* Disable user interaction */
+            opacity: 0.7; /* Optionally reduce opacity to visually emphasize the disabled state */
+        }
+        input[type=button], input[type=submit], input[type=reset] {
+            background-color: #04AA6D;
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        /* Add this to your stylesheet or in a style tag in the HTML */
+        .spinner {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Add CSS styles to position the redirection container */
+        #redirectionContainer {
+            display: inline-block; /* Make it inline-block to stay beside the submit button */
+            vertical-align: middle; /* Align vertically with the button */
+            margin-left: 10px; /* Adjust the margin as needed */
+        }
+
+        /* Add styles to make the loader and link inline */
+        #redirectionLoader p, #redirectionLoader a {
+            display: inline;
+        }
+        #redirectionLoader{
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Navbar -->
+<div th:replace="layouts/mainLayout"></div>
+
+<div class="container mx-auto p-4 flex justify-center items-center h-screen">
+    <div class="w-full max-w-md">
+
+        <form id="registrationForm" th:action="@{/api/user/register}" method="post"
+              class="bg-white p-6 rounded-md shadow-md">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Register / Sign Up</h2>
+            <!-- Font Awesome login icon indicating login -->
+            <div class="text-center p-4">
+                <i class="fa fa-user-plus fa-3x text-blue-500"></i>
+            </div>
+            <label for="username" class="block text-sm font-medium text-gray-600">Username:</label>
+            <input type="text" id="username" name="username" autocomplete="new-password"
+                   class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300"
+                   required />
+            <span id="usernameStatus"></span>
+            <span id="usernameText" class="text-gray-600 mt-2 block"></span>
+
+            <label for="password" class="block mt-4 text-sm font-medium text-gray-600">Password:</label>
+            <input type="password" id="password" name="password" autocomplete="new-password"
+                   class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300"
+                   required />
+            <span id="passwordStatus"></span>
+            <span id="passwordText" class="text-gray-600 mt-2 block"></span>
+
+            <label for="email" class="block mt-4 text-sm font-medium text-gray-600">Email:</label>
+            <input type="email" id="email" name="email"
+                   class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300"
+                   required />
+            <span id="emailStatus"></span>
+            <span id="emailText" class="text-gray-600 mt-2 block"></span>
+
+            <label for="firstName" class="block mt-4 text-sm font-medium text-gray-600">First Name:</label>
+            <input type="text" id="firstName" name="firstName"
+                   class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300"
+                   required />
+
+            <label for="lastName" class="block mt-4 text-sm font-medium text-gray-600">Last Name:</label>
+            <input type="text" id="lastName" name="lastName"
+                   class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300"
+                   required />
+
+            <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full mt-4">
+                Register
+            </button>
+
+
+            <div id="redirectionContainer" class="hidden mt-2">
+                <div id="redirectionLoader" class="text-center">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <button onclick="window.location.href='/oauth2/authorization/github'"
+                    class="block mb-2 w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+                <i class="fab fa-github mr-2"></i>Sign Up with Github
+            </button>
+
+        </form>
+
+        <div id="info" role="alert" class="text-center mt-4"></div>
+        <div id="passwordRequirements" class="text-center mt-4"></div>
+        <div id="usernameRequirements" class="text-gray-600 mt-2"></div>
+        <div id="loadingIcon" class="text-gray-600 mt-2"></div>
+
+        <script src="/webjars/axios/1.6.2/dist/axios.min.js"></script>
+        <script th:src="@{/js/register.js}"></script>
+    </div>
+</div>
+<div th:replace="layouts/footerLayout"></div>
+</body>
+</html>

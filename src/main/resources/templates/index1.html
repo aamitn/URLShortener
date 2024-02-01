@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
+</head>
+<body>
+
+<div class="row" sec:authorize="hasRole('ROLE_USER')">
+    <div class="col-md-10 col-md-offset-2">
+        <h2>User Has Role User</h2>
+    </div>
+</div>
+
+<!-- Include the navbar from mainlayout -->
+<div th:replace="layouts/mainLayout"></div>
+
+<h2>Welcome to the Home Page!</h2>
+
+<!-- Check if the user is authenticated / visible only to authenticated users.-->
+<div sec:authorize="isAuthenticated()">
+    <!-- display username -->
+    <p>You are logged in as : <span sec:authentication="name"></span>
+        with <span sec:authentication="principal.authorities">Role</span></p>
+
+    <p>Account Enabled: <span sec:authentication="principal.enabled"></span></p>
+
+    <!-- Display user details -->
+    <div id="userDetails">
+        <h3>User Details</h3>
+        <p id="userId"></p>
+        <p id="email"></p>
+        <p id="firstName"></p>
+        <p id="lastName"></p>
+        <p id="enabled"></p>
+        <p id="accountNonLocked"></p>
+        <!-- Add other fields as needed -->
+    </div>
+
+    <!-- Section for generating short URLs -->
+    <div>
+        <form id="shortenForm">
+            <input type="text" id="originalUrl" placeholder="Enter the original URL" required />
+            <button type="submit">Shorten</button>
+        </form>
+        <!-- Display the result within the same page -->
+        <div id="result"></div>
+    </div>
+
+    <div>
+        <!-- Table to display user URLs -->
+        <table id="urlsTable" class="display">
+            <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Original URL</th>
+                <th>Short URL</th>
+                <th>type</th>
+                <th>hits</th>
+                <th>uhits</th>
+                <th>ActionDelete</th>
+                <th>ActionCopy</th>
+                <th>ActionShare</th>
+                <th>ActionEditInfo</th>
+                <th>QRButton</th>
+                <th>QRImage</th>
+            </tr>
+            </thead>
+            <tbody id="urlsTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Set username as a global variable in JavaScript -->
+    <script th:inline="javascript">
+        var username = /*[[${#authentication.principal.username}]]*/ '';
+    </script>
+
+    <script src="/webjars/axios/1.6.2/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script th:src="@{/js/shorten.js}"></script>
+
+</div>
+</body>
+</html>

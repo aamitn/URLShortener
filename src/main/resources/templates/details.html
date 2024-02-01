@@ -1,0 +1,1144 @@
+<!-- details.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
+<style>
+
+    input[type="color"] {
+        padding: 0;
+    }
+
+    input[type='text']:hover{
+        color:red;
+        border:2px solid red;
+    }
+
+    .badge-pill{
+        color: #cccccc;
+    }
+
+</style>
+</head>
+<body class="bg-gray-100">
+<!-- Navbar -->
+<div th:replace="layouts/mainLayout1"></div>
+
+<!-- src/main/resources/templates/fragments/_navbar.html -->
+
+<div id="navbar" xmlns:sec="http://www.w3.org/1999/xhtml" class="flex flex-nowrap bg-gray-800 text-white py-4">
+
+
+
+
+    <!-- Company Logo with SVG -->
+    <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" class="w-8 h-8 mr-2">
+            <!-- Your SVG path here -->
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2zm0-8h2v-2h-2z" />
+        </svg>
+    </div>
+
+    <!-- Left side navigation links with icons -->
+    <ul class="flex justify-start space-x-4 items-center">
+        <li>
+            <a th:href="@{/}" class="flex items-center">
+                <i class="fas fa-home mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Home</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/contact}" class="flex items-center">
+                <i class="fas fa-envelope mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Contact Us</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/api-docs}" class="flex items-center">
+                <i class="fas fa-book mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">API Docs</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/monitoring}" class="flex items-center">
+                <i class="fas fa-book mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Health</span>
+            </a>
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/logout}" class="flex items-center">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span class="hover:text-gray-300 transition duration-300">Logout</span>
+            </a>
+        </li>
+
+    </ul>
+
+
+
+    <!-- Right side profile dropdown -->
+    <div class="ml-auto flex items-center space-x-4">
+        <div class="relative" sec:authorize="isAuthenticated()">
+
+            <!-- Profile dropdown trigger -->
+            <button class="flex items-center focus:outline-none"
+                    onclick="toggleDropdown()">
+                <i class="fas fa-user-circle text-xl mr-2"></i>
+                <span class="mr-2" id="usernameInject" ></span>
+                <img  id="profileImage" alt="Profile Picture"
+                      class="w-8 h-8 rounded-full cursor-pointer">
+            </button>
+
+            <!-- Profile dropdown content -->
+            <div id="profileDropdown" class="absolute right-0 mt-2 bg-white border rounded-md shadow-md hidden text-black" style ="z-index: 10">
+                <p class="p-2" id="usernameInject1" ></p>
+                <p class="p-2" id="useremailInject"></p>
+                <!-- Add more profile information if needed -->
+                <hr class="my-2 text-blue-500">
+                <a href="#" id="profileSettings" class="block p-2 hover:bg-gray-200">Settings</a>
+                <a href="/logout" class="block p-2 hover:bg-gray-200">Logout</a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+        <!-- Login Button -->
+        <a sec:authorize="isAnonymous()" th:href="@{/login}" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300">Login</a>
+
+        <!-- Register Button -->
+        <a sec:authorize="isAnonymous()" th:href="@{/register}" class="bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-700 transition duration-300">Register</a>
+    </div>
+
+
+</div>
+
+
+<div class="container mx-auto my-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Card 1 -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <div class="mb-4">
+            <h2 class="text-2xl font-bold mb-2">Link Details</h2>
+            <p class="mb-3">   <span class="mb-3 font-bold">Short Code:</span> <span id="shortUrlDetails"></span>
+                <i id="closeIcon" onclick="hideEditForm()" style="display: none;" class="fas fa-times"></i>
+                <!-- Edit Icon -->
+
+            <button onclick="showEditForm()" id="editIcon" style="cursor: pointer;" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <i class="fas fa-edit"></i>
+                Edit
+            </button>
+            </p>
+
+            <!-- Edit Form -->
+            <p class="mb-3">
+            <div id="editForm" style="display: none;">
+                <form onsubmit="submitEditForm(); return false;">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-green" for="newShortUrl">New Short URL:</label>
+                    <input  placeholder="Enter new backhalf" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" id="newShortUrl" required>
+                   <div style = "padding: 8px;">
+                    <button type="submit"  class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Submit</button>
+                   </div>
+                </form>
+            </div>
+            </p>
+
+            <p class="mb-3 ">
+              <span class="mb-3 font-bold">Short URL:</span>
+                <span id="shortUrlLink"></span>&nbsp;&nbsp;
+                <span id="shortUrlLinkIcon"></span>&nbsp;&nbsp;
+                <span id="shortUrlLinkShare"></span>&nbsp;&nbsp;
+            </p>
+
+            <p class="mb-3 ">
+                <span id="originalUrlDetailsSpan" class="mb-3 font-bold">Original URL</span>
+                <span id="originalUrlDetails"></span>&nbsp;&nbsp;
+            </p>
+
+            </p>
+
+            <!-- Switches-->
+            <div class="flex flex-col space-y-4 mb-5">
+                <!-- Publish Toggle switch -->
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input id="linkStatusSwitch" onchange="toggleLinkStatus(this.checked)" checked type="checkbox" value="" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Status</span>&nbsp;&nbsp;
+                    <span id="linkStatusPill" class="badge badge-pill"></span>
+                </label>
+                <!-- Password Toggle switch -->
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input id="passwordCheckbox" onchange="togglePasswordField()" type="checkbox" value="" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Link-protection</span>&nbsp;&nbsp;
+                    <span id="protectionStatusPill" class="badge badge-pill"></span>
+                </label>
+            </div>
+        </p>
+
+            <p class="mb-3">
+            <div id="passwordField" style="display: none;">
+                <input class="bg-gray-50 border border-blue-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="password" id="passwordInput" placeholder="Enter password">
+                <div style="padding: 8px;">
+                <button id="passwordButton" onclick="setPassword()"  class="text-white bg-blue-700 hover:bg-green-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Set Password</button>
+                </div>
+            </div>
+            </p>
+            <p><span class="mb-3" id="editbio"></span></p>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <div class="mb-4">
+            <h2 class="text-2xl font-bold mb-2">Link Stats and Information</h2>
+            <p class="card-text">
+                <!-- New paragraph for short URL link and copy to clipboard icon -->
+            <p class="mb-3">     <i class="fas fa-edit"></i><span class="mb-3 font-bold">Link ID:</span>  <span class="mb-3" id="idDetails"></span></p>
+            <p class="mb-3">     <i class="fas fa-edit"></i><span class="mb-3 font-bold">Link Type:</span> <span class="mb-3" id="linkTypeDetails"></span></p>
+            <p class="mb-3">     <i class="fas fa-edit"></i><span class="mb-3 font-bold">Hits:</span>  <span class="mb-3" id="hitsDetails"></span></p>
+            <p class="mb-3">     <i class="fas fa-edit"></i> <span class="mb-3 font-bold">Unique Hits </span><span class="mb-3" id="uniqueHitsDetails"></span></p>
+            <p class="mb-3">    <i class="fas fa-edit"></i> <span class="mb-3 font-bold">Created At: </span> <span class="mb-3" id="timestampDetails"></span></p>
+            <p class="mb-3">    <i class="fas fa-edit"></i> <span class="mb-3 font-bold">UserId :</span>    <span class="mb-3" id="userIdDetails"></span></p>
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Card 3 -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <div class="mb-4">
+            <h2 class="text-2xl font-bold mb-2 text-center">QR</h2>
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-sm" style="border:2px solid black; border-radius: 25px;">
+                        <!-- Add this img element to display the QR code image -->
+                        <div class = "col" style="display: flex;justify-content: center;align-items: center; padding: 20px;">
+
+
+                            <figure class="max-w-lg">
+                                <img id="qrCodeImage" class="h-auto max-w-xl rounded-lg shadow-xl dark:shadow-gray-800" src="/docs/images/examples/image-2@2x.jpg"  style="max-width: 200px; display: none;" alt="QR Code Image">
+                                <figcaption class="mt-2 text-sm text-center text-gray-500 dark:text-gray-400">Click on the image to Download</figcaption>
+                            </figure>
+                        </div>
+
+
+                        <div class="flex mx-auto space-x-4" style ="padding-left: 68px;">
+
+                            <!-- FG Color Picker -->
+                            <div class="flex flex-col">
+                                <label for="fgColorPicker" class="text-sm font-medium mb-2 dark:text-white">FG Color:</label>
+                                <input type="color" class="p-1 h-10 w-14 block bg-white border border-gray-200 cursor-pointer w-10 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700" id="fgColorPicker" value="#ffffff" title="Choose your color">
+                            </div>
+
+                            <!-- BG Color Picker -->
+                            <div class="flex flex-col">
+                                <label for="bgColorPicker" class="text-sm font-medium mb-2 dark:text-white">BG Color:</label>
+                                <input type="color" class="p-1 h-10 w-14 block bg-white border border-gray-200 cursor-pointer w-10 rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700" id="bgColorPicker" value="#00000" title="Choose your color">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm">
+
+
+
+                        <textarea id="qrCodeDetails"  data-toggle="tooltip" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..." readonly></textarea>
+
+
+                        <label for="qrCodeDetails"  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">RAW QR CODE</label>
+                    </div>
+                </div>
+
+                <div id="myAlertContainer"></div>
+
+                <div class="row">
+                    <div class="col-6" style="padding:8px;">
+                        <!-- Generate QR Code Button -->
+                        <button  id="generateQrCodeButton" style="cursor: pointer;" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <i class="fa-solid fa-qrcode"></i>
+                            Generate QR Code
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ... Other content for Card 3 ... -->
+    </div>
+
+    <!-- Card 4 -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <div class="mb-4">
+            <h2 class="text-2xl font-bold mb-2">Link Stats and Information</h2>
+            <h5 class="card-title"></h5>
+            <p class="card-text">
+
+
+                <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="myTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="ipCountTab" data-toggle="tab" href="#ipCountContent">IP Count</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="redirectionTimeTab" data-toggle="tab" href="#redirectionTimeContent">Redirection Time</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="deviceTypeTab" data-toggle="tab" href="#deviceTypeContent">Device Type</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane container active" id="ipCountContent">
+                    <canvas id="ipCountChart" ></canvas>
+                </div>
+                <div class="tab-pane container" id="redirectionTimeContent">
+                    <canvas id="redirectionTimeChart" ></canvas>
+                </div>
+                <div class="tab-pane container" id="deviceTypeContent">
+                    <canvas id="deviceTypeChart" ></canvas>
+                </div>
+            </div>
+
+            </p>
+        </div>
+        <!-- ... Other content for Card 4... -->
+    </div>
+
+
+    <!-- Card 4 -->
+    <div id ="bioDiv" class="bg-white p-8 rounded-lg shadow-md">
+        <div class="mb-4">
+            <h2 class="text-2xl font-bold mb-2">Link Stats and Information</h2>
+            <h5 class="card-title"></h5>
+            <p class="card-text">
+            <p id="bioContentDetails"></p>
+            </p>
+        </div>
+        <!-- ... Other content for Card 4... -->
+    </div>
+
+    <!-- ... Add more cards as needed ... -->
+</div>
+
+
+
+
+
+<!-- Card 6 -->
+<div class="bg-white p-8 rounded-lg shadow-md">
+    <div class="mb-4">
+        <h2 class="text-2xl font-bold mb-2">Link Stats and Information</h2>
+        <!-- Your content for Card 6 -->
+
+        <!-- Stunning Table -->
+        <div class="overflow-x-auto">
+            <table id="analyticsTable" class="table-auto w-full border-collapse border border-gray-300">
+                <thead>
+                <tr>
+                    <th class="border px-4 py-2">ID</th>
+                    <th class="border px-4 py-2">IP</th>
+                    <th class="border px-4 py-2">Timezone</th>
+                    <th class="border px-4 py-2">Device Type</th>
+                    <th class="border px-4 py-2">Language</th>
+                    <th class="border px-4 py-2">Type</th>
+                    <th class="border px-4 py-2">Timestamp</th>
+                    <th class="border px-4 py-2">Redirection Time</th>
+                    <!-- Add more columns as needed -->
+                </tr>
+                </thead>
+                <tbody id="analyticsTableBody">
+                <!-- Table body content here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- ... Other content for Card 2 ... -->
+</div>
+
+
+<div th:replace="layouts/footerLayout"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+    function showUrlDetails() {
+        // Fetch URL details using the API endpoint
+        axios.get('/api/url/details', {
+            params: {
+                shortUrl: shortUrl
+            }
+        })
+            .then(function (response) {
+
+                // Extract URL details from the response
+                var urlDetails = response.data;
+                console.log(urlDetails); //remove later
+
+
+                // Update the details page with the retrieved data
+
+                document.getElementById('idDetails').innerText = (urlDetails.id ? urlDetails.id : 'null');
+                document.getElementById('shortUrlDetails').innerText = (urlDetails.shortUrl ? urlDetails.shortUrl : 'null');
+                document.getElementById('userIdDetails').innerText = (urlDetails.userId ? urlDetails.userId : 'null');
+                document.getElementById('originalUrlDetails').innerText =   (urlDetails.originalUrl ? urlDetails.originalUrl : 'null');
+                document.getElementById('linkTypeDetails').innerText = (urlDetails.linkType ? urlDetails.linkType : 'null');
+                document.getElementById('hitsDetails').innerText = (urlDetails.hits ? urlDetails.hits : 'null');
+                document.getElementById('uniqueHitsDetails').innerText =  (urlDetails.uniqueHits ? urlDetails.uniqueHits : 'null');
+                document.getElementById('timestampDetails').innerText = (urlDetails ? urlDetails.timestamp : 'null');
+                document.getElementById('qrCodeDetails').value =  (urlDetails ? urlDetails.qrCode : 'null');
+
+                //copy text of textarea on click
+                const myTextarea = document.getElementById("qrCodeDetails");
+                myTextarea.addEventListener("click", copyText);
+                function copyText() {
+                    const textToCopy = this.value;
+                    this.select();
+                    document.execCommand("copy");
+
+                    // Create and show the alert
+                    const alertElement = document.createElement("div");
+                    alertElement.classList.add("alert", "alert-success"); // Replace "alert-success" with your chosen type
+                    alertElement.innerHTML = "Text copied to clipboard!";
+
+                    const containerElement = document.getElementById("myAlertContainer"); // Replace "myAlertContainer" with the ID of your alert container
+                    containerElement.appendChild(alertElement);
+
+                    // Optional: Hide the alert automatically after a delay
+                    setTimeout(() => containerElement.removeChild(alertElement), 3000); // 3 seconds is an example, adjust as needed
+                }
+                $('[data-toggle="tooltip"]').tooltip();
+
+
+                // Display QR Code Image
+                var qrCodeImage = document.getElementById('qrCodeImage');
+                if (urlDetails.qrCode) {
+                    qrCodeImage.src = 'data:image/png;base64,' + urlDetails.qrCode;
+                    qrCodeImage.style.display = 'block';
+                } else {
+                    qrCodeImage.style.display = 'none';
+                }
+
+                // Display Bio Content (if available)
+                var bioContentDetails = document.getElementById('bioContentDetails');
+                var bioDiv = document.getElementById('bioDiv');
+                if (urlDetails.bioContent) {
+                    bioDiv.style.display= 'block';
+                    bioContentDetails.innerHTML = '<p>Bio Content:</p><div>' + urlDetails.bioContent + '</div>';
+                    bioContentDetails.style.display = 'block';
+                } else {
+                    bioContentDetails.style.display = 'none';
+                }
+
+                // Get elements for color pickers and button
+                var fgColorPicker = document.getElementById('fgColorPicker');
+                var bgColorPicker = document.getElementById('bgColorPicker');
+                var generateQrCodeButton = document.getElementById('generateQrCodeButton');
+
+                // Add click event listener to the Generate QR Code button
+                generateQrCodeButton.addEventListener('click', function () {
+                    // Get foreground and background color values
+                    var fgColor = fgColorPicker.value;
+                    var bgColor = bgColorPicker.value;
+
+                    // Call the function to generate QR code with the selected colors
+                    generateQrCode(shortUrl, '', fgColor, bgColor);
+                });
+
+
+                //Add Bio Edit Button
+                if ( urlDetails.linkType == 'bio') {
+                    document.getElementById('originalUrlDetails').style.display='none';
+                    document.getElementById('originalUrlDetailsSpan').style.display='none';
+                    //Check if Button Exists
+                    if( !(document.getElementById("bio-edit-button")) )
+                    {
+                        // Create a button element
+                        var button = document.createElement('button');
+                        var bioEditButton = document.getElementById('editbio')
+                        bioEditButton.appendChild(button);
+                        button.id = "bio-edit-button";
+                        button.innerText = 'EDIT BIO PAGE';
+                        button.className = 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+                        button.addEventListener('click', () => {
+                            //  console.log(getBaseUrl() + 'bio?shortUrl=' + localStorage.getItem("url"));
+                            window.location.href = getBaseUrl() + 'bio?shortUrl=' + shortUrl ;
+                        })
+                    }
+                }
+
+
+
+                    var userId = urlDetails.userId;
+                    console.log("USERID IS :"+ userId);
+                    var requesturl = "http://localhost:8080/api/user/"+userId+"/username";
+
+                    console.log ("URL IS:"+requesturl);
+
+                    axios.get('http://localhost:8080/api/user/1/username')
+                        .then(function (response) {
+                            axios.get('/api/user/details/' + response.data)
+                                .then(function (response) {
+                                    console.log(response.data.email);
+                                    document.getElementById('usernameInject').innerText =  response.data.username;
+                                    document.getElementById('usernameInject1').innerText = 'User ID: ' + response.data.userId;
+                                    document.getElementById('useremailInject').innerText =   response.data.email;
+
+                                    document.getElementById("profileImage").src = "api/user/profile-picture?username="+response.data.username;
+
+                                    var settings = document.getElementById("profileSettings");
+
+                                    var fullUrl = window.location.href;
+                                    var baseUrl = fullUrl.split( '/' );
+                                    var protocol = baseUrl[0];
+                                    var host = baseUrl[2];
+                                    var url = protocol + '//' + host;
+                                    console.log(url);
+
+                                    settings.href = url+"/profile?username="+response.data.username;
+
+                                })
+                                .catch(function (error) {
+                                    console.error('Error:', error.response.data);
+                                });
+                        })
+                        .catch(function (error) {
+                            console.error('Error:', error.response.data);
+                        });
+
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+    }
+    window.onload = function() {
+        showUrlDetails();
+        showLinkAndIcons();
+        showAnalyticsDetails();
+        fetchLinkStatus();
+        document.getElementById('bioDiv').style.display='none';
+    };
+   // window.location.reload();
+    //Show a Bio Edit Button if the link type is bio
+
+    function showLinkAndIcons()
+    {
+
+        // Set short URL link and add click event listener to the Copy to Clipboard button
+        var shortUrlCell = document.getElementById('shortUrlLink');
+        var shortUrlLink = document.createElement('a');
+        const fullUrl = getBaseUrl() + shortUrl;
+        shortUrlLink.href = fullUrl; // Fetch domain and port dynamically
+        shortUrlLink.textContent = fullUrl;
+        shortUrlCell.appendChild(shortUrlLink);
+
+        // Add a copy icon in the new column for copying to clipboard
+        var copyDiv= document.getElementById('shortUrlLinkIcon');
+        var copyIcon = document.createElement('i');
+        copyIcon.className = 'fas fa-copy';
+        copyIcon.style.cursor = 'pointer';
+        copyIcon.alt = 'Copy to Clipboard';
+        copyIcon.addEventListener('click', function () {
+            // Call the function to copy short URL to clipboard
+            copyToClipboard(fullUrl);
+        });
+        copyDiv.appendChild(copyIcon);
+
+        // Add a share icon in the new column for sharing
+        var shareCell =  document.getElementById('shortUrlLinkShare');
+        var shareIcon = document.createElement('i');
+        shareIcon.className = 'fas fa-share';
+        shareIcon.style.cursor = 'pointer';
+        shareIcon.addEventListener('click', function () {
+            // Call the function to share short URL using Web Share API
+            shareShortUrl(fullUrl);
+        });
+        shareCell.appendChild(shareIcon);
+    }
+    function generateQrCode(shortUrl, logoPath, fgColor, bgColor) {
+        // Call the endpoint to generate QR code
+        axios.get('/api/url/qr/generate', {
+            params: {
+                shortUrl: shortUrl,
+                logoPath: logoPath,
+                fgColor: fgColor,
+                bgColor: bgColor
+            }
+        })
+            .then(function (response) {
+                // Display the generated QR code directly in the div
+                console.log('RAWQR:' + response.data.substring(0,25)); //remove later
+
+                // Call showUrlDetails after QR code generation is complete
+                showUrlDetails();
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+            });
+    }
+
+    function copyToClipboard(text) {
+        var dummy = document.createElement('textarea');
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+        alert('Copied to clipboard: ' + text);
+    }
+
+    function getBaseUrl() {
+        var port = window.location.port;
+        var baseUrl = window.location.protocol + '//' + window.location.hostname;
+        if (port) {
+            baseUrl += ':' + port;
+        }
+        return baseUrl+'/';
+    }
+    function shareShortUrl(url) {
+        if (navigator.share) {
+            var shareMessage = 'Check out this short URL: ' + url;
+
+            // Create a clickable link in the shared message
+            var linkElement = document.createElement('a');
+            linkElement.href = url;
+            linkElement.textContent = url;
+
+            navigator.share({
+                title: 'Share Short URL',
+                text: shareMessage,
+                url: url,
+            })
+                .then(() => console.log('Successful share'))
+                .catch((error) => console.log('Error sharing:', error));
+        } else {
+            alert('Web Share API is not supported in this browser.');
+        }
+    }
+
+    function showAnalyticsDetails() {
+
+        // Fetch analytics details using the API endpoint
+        axios.get('/api/url/analytics', {
+            params: {
+                shortUrl: shortUrl
+            }
+        })
+            .then(function (response) {
+
+
+                var dataTable = $('#analyticsTable').DataTable({
+                    paging: true,           // Enable pagination
+                    searching: true,        // Enable searching
+                    ordering: true,         // Enable sorting
+                    info: true,             // Show information about the table
+                    lengthChange: true,    // Disable changing number of records per page
+                    pageLength: 10,         // Set the default number of records per page
+                    responsive: true,       // Enable responsive design
+                    columnDefs: [
+                        { targets: [0, 2], orderable: false } // Disable sorting for specific columns
+                    ],
+                    destroy: true,
+                    data: response.data,
+                    columns: [
+                        { data: 'id' },
+                        { data: 'deviceIp' },
+                        { data: 'timezone' },
+                        { data: 'deviceType' },
+                        { data: 'acceptLanguage' },
+                        { data: 'acceptTypes' },
+                        { data: 'timestamp' },
+                        { data: 'redirectionTime' }
+                        // Add more columns as needed
+                    ],
+                    // Add other DataTable options here
+                });
+
+                // Refresh DataTable after updating the rows
+                dataTable.draw();
+                var table = $('#analyticsTable').DataTable();
+
+                var data = table
+                    .rows()
+                    .data();
+
+                console.log( 'The table has ' + data.length + ' records' );
+                console.log( 'Data', data );
+
+
+                //Chart calls
+                displayIpChart();
+                displayRedirectionTimeChart();
+                displayDeviceTypeChart();
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+    }
+
+    // Call the function to show analytics details when the page loads
+    // showAnalyticsDetails();
+
+    // Function to show the edit form
+    function showEditForm() {
+        // Hide the edit icon and show the form
+        document.getElementById('editIcon').style.display = 'none';
+        document.getElementById('closeIcon').style.display = 'block';
+        document.getElementById('editForm').style.display = 'block';
+    }
+
+    function hideEditForm() {
+        // Hide the edit icon and show the form
+        document.getElementById('editIcon').style.display = 'block';
+        document.getElementById('closeIcon').style.display = 'none';
+        document.getElementById('editForm').style.display = 'none';
+    }
+
+
+    // Function to submit the edit form
+    function submitEditForm() {
+        // Get the new short URL from the form
+        var newShortUrl = document.getElementById('newShortUrl').value;
+
+        // Get the old short URL from the details
+        var oldShortUrl = document.getElementById('shortUrlDetails').innerText;
+
+        // Send the edit request to the server
+        axios.put('/api/url/edit', null, {
+            params: {
+                oldShortUrl: oldShortUrl,
+                newShortUrl: newShortUrl
+            }
+        })
+            .then(function (response) {
+                // Hide the form and show the edit icon
+                document.getElementById('editForm').style.display = 'none';
+                document.getElementById('editIcon').style.display = 'inline';
+
+                // Update the details page with the retrieved data
+                window.location.href(getBaseUrl()+'details?shortUrl='+newShortUrl);
+
+
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+                // Handle errors as needed, e.g., display an error message
+            });
+    }
+
+    function displayIpChart() {
+        var dataTable = $('#analyticsTable').DataTable();
+        var rows = dataTable.column(1).data().toArray();
+
+        const uniqueItems = new Set(rows);
+        const itemCounts = new Map();
+
+        for (const item of rows) {
+            itemCounts.set(item, (itemCounts.get(item) || 0) + 1);
+        }
+
+        console.log("Unique items and their counts:");
+        for (const uniqueItem of uniqueItems) {
+            console.log(`${uniqueItem}: ${itemCounts.get(uniqueItem)}`);
+        }
+
+        // Convert the Set and Map data to arrays for Chart.js
+        const uniqueItemsArray = Array.from(uniqueItems);
+        const itemCountsArray = Array.from(itemCounts.values());
+
+        // Get the canvas element from the HTML
+        const chartCanvas = document.getElementById('ipCountChart');
+
+        // Create the bar chart
+        const myChart = new Chart(chartCanvas, {
+            type: 'bar',
+            data: {
+                labels: uniqueItemsArray,
+                datasets: [{
+                    label: 'Item Counts',
+                    data: itemCountsArray,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Adjust the color as needed
+                    borderColor: 'rgba(75, 192, 192, 1)', // Adjust the color as needed
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Function to display the chart
+    function displayRedirectionTimeChart() {
+        var dataTable = $('#analyticsTable').DataTable();
+        var rows = dataTable.data().toArray();
+
+        // Extract redirection time data from the rows
+        const redirectionTimeArray = rows.map(row => row.redirectionTime);
+
+        // Get the canvas element from the HTML
+        const chartCanvas = document.getElementById('redirectionTimeChart');
+
+        // Create the line chart
+        const myChart = new Chart(chartCanvas, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: redirectionTimeArray.length }, (_, i) => i + 1), // Assuming sequential labels
+                datasets: [{
+                    label: 'Redirection Time',
+                    data: redirectionTimeArray,
+                    fill: false,
+                    borderColor: 'rgba(255, 99, 132, 1)', // Adjust the color as needed
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+
+    function displayDeviceTypeChart() {
+        var dataTable = $('#analyticsTable').DataTable();
+        var rows = dataTable.column(3).data().toArray();
+        console.log(rows);
+        const uniqueItems = new Set(rows);
+        const itemCounts = new Map();
+
+        for (const item of rows) {
+            itemCounts.set(item, (itemCounts.get(item) || 0) + 1);
+        }
+
+        console.log("Unique items and their counts:");
+        for (const uniqueItem of uniqueItems) {
+            console.log(`${uniqueItem}: ${itemCounts.get(uniqueItem)}`);
+        }
+
+        // Convert the Set and Map data to arrays for Chart.js
+        const uniqueItemsArray = Array.from(uniqueItems);
+        const itemCountsArray = Array.from(itemCounts.values());
+
+        // Get the canvas element from the HTML
+        const chartCanvas = document.getElementById('deviceTypeChart');
+
+        // Create the bar chart
+        const myChart = new Chart(chartCanvas, {
+            type: 'bar',
+            data: {
+                labels: uniqueItemsArray,
+                datasets: [{
+                    label: 'Device Types',
+                    data: itemCountsArray,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Adjust the color as needed
+                    borderColor: 'rgba(75, 192, 192, 1)', // Adjust the color as needed
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(value) {
+                                if (value.length > 4) {
+                                    console.log("great");
+                                    return value.substr(0, 4) + '...'; //truncate
+                                } else {
+                                    return value
+                                }
+
+                            },
+                        }
+                    },
+                    y: {beginAtZero: true}
+                },
+
+
+                tooltips: {
+                    enabled: true,
+                    mode: 'label',
+                    callbacks: {
+                        title: function(tooltipItems, data) {
+                            var idx = tooltipItems[0].index;
+                            return 'Title:' + data.labels[idx]; //do something with title
+                        },
+                        label: function(tooltipItems, data) {
+                            //var idx = tooltipItems.index;
+                            //return data.labels[idx] + ' €';
+                            return tooltipItems.xLabel + ' €';
+                        }
+                    }
+                }
+
+            }
+        });
+    }
+
+
+    // Function to update active tab based on user interaction
+    $('#myTabs a').on('click', function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+        updateActiveTab($(this).attr('id'));
+    });
+
+    function updateActiveTab(activeTabId) {
+        // Remove 'active' class from all tabs
+        $('#myTabs a').removeClass('active');
+        // Add 'active' class to the clicked tab
+        $('#' + activeTabId).addClass('active');
+    }
+
+    // Toggle function for the switch
+    function toggleLinkStatus(checked) {
+        // Assume linkStatusPill is the ID of the pill element
+        var linkStatusPill = document.getElementById('linkStatusPill');
+        var linkStatusSwitch = document.getElementById('linkStatusSwitch');
+
+        // Get the short URL from your page (you might need to adapt this based on your page structure)
+        var shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+        // Make an AJAX request to update the link status
+       // axios.get('/api/url/setstatus', { shortUrl: shortUrl, linkStatus: checked ? 1 : 0 })
+
+        axios.get('/api/url/setstatus',{
+            params: {
+                shortUrl: shortUrl,
+                linkStatus: checked ? 1 : 0
+            }
+        })
+            .then(function (response) {
+                console.log(response.data);
+
+                // Update the pill color based on the new link status
+                if (checked) {
+                    linkStatusPill.className = 'badge rounded-pill text-bg-success';
+                    linkStatusPill.classList.add('badge-primary');
+                    linkStatusPill.classList.remove('badge-danger');
+                    linkStatusPill.textContent = 'Enabled';
+                } else {
+                    linkStatusPill.className = 'badge rounded-pill text-bg-warning';
+                    linkStatusPill.classList.add('badge-danger');
+                    linkStatusPill.classList.remove('badge-primary');
+                    linkStatusPill.textContent = 'Disabled';
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+            });
+    }
+
+    // Function to fetch link status on page load
+    function fetchLinkStatus() {
+        // Get the short URL from your page (you might need to adapt this based on your page structure)
+        var shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+        // Make an AJAX request to fetch the link status
+        axios.get('/api/url/status', { params: { shortUrl: shortUrl } })
+            .then(function (response) {
+                console.log(response.data);
+
+                // Get the link status value
+                var linkStatus = response.data;
+
+                // Update the switch and pill based on the link status
+                var linkStatusSwitch = document.getElementById('linkStatusSwitch');
+                var linkStatusPill = document.getElementById('linkStatusPill');
+
+
+
+                if (linkStatus == 1) {
+                    linkStatusSwitch.checked = true;
+                    linkStatusPill.className = 'badge rounded-pill text-bg-success';
+                    linkStatusPill.classList.add('badge-primary');
+                    linkStatusPill.classList.remove('badge-danger');
+                    linkStatusPill.textContent = 'Enabled';
+                } else {
+                    linkStatusSwitch.checked = false;
+                    linkStatusPill.className = 'badge rounded-pill text-bg-warning';
+                    linkStatusPill.classList.add('badge-danger');
+                    linkStatusPill.classList.remove('badge-primary');
+                    linkStatusPill.textContent = 'Disabled';
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+            });
+    }
+
+
+
+//CODE FOR PASSWORD SET/RESET
+
+
+    var protectionStatusPill = document.getElementById('protectionStatusPill');
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fetch and initialize password checkbox state
+        fetchPassword();
+
+        // Fetch and initialize password input field state
+        fetchPasswordFieldState();
+    });
+
+    function togglePasswordField() {
+        var passwordField = document.getElementById('passwordField');
+        var passwordCheckbox = document.getElementById('passwordCheckbox');
+
+
+        passwordField.style.display = passwordCheckbox.checked ? 'block' : 'none';
+        passwordField.style.border = passwordCheckbox.checked ? '2px solid gray' : 'none';
+        passwordField.style.transition = passwordCheckbox.checked ? 'transition: width 0.4s ease-in-out' : 'none';
+        passwordField.style.borderRadius = passwordCheckbox.checked ? '8px' : 'none';
+
+    }
+    function fetchPassword() {
+        // Get the short URL from your page (you might need to adapt this based on your page structure)
+        var shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+        // Make an AJAX request to fetch the password
+        axios.get('/api/url/get-password', { params: { shortUrl: shortUrl } })
+            .then(function (response) {
+                console.log(response.data);
+
+                // Update the checkbox state based on the presence of a password
+                var passwordCheckbox = document.getElementById('passwordCheckbox');
+                passwordCheckbox.checked = response.data !== null;
+
+                // Toggle the password field visibility based on the checkbox state
+                togglePasswordField();
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+            });
+    }
+
+    function fetchPasswordFieldState() {
+        // Get the short URL from your page (you might need to adapt this based on your page structure)
+        var shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+        // Make an AJAX request to fetch the password
+        axios.get('/api/url/get-password', { params: { shortUrl: shortUrl } })
+            .then(function (response) {
+                console.log(response.data);
+
+                // Update the password field value if a password is present
+                var passwordInput = document.getElementById('passwordInput');
+                passwordInput.value = response.data;
+
+                if(passwordInput.value == "")
+                {
+                    console.log("Link Unprotected");
+                    var passwordCheck= document.getElementById('passwordCheckbox');
+                    passwordCheck.checked = false;
+                    togglePasswordField();
+                    protectionStatusPill.className = 'badge rounded-pill text-bg-warning';
+                    protectionStatusPill.classList.add('badge-danger');
+                    protectionStatusPill.classList.remove('badge-primary');
+                    protectionStatusPill.textContent = 'Unprotected';
+                }
+
+
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+            });
+    }
+
+    // Function to set the password
+    function setPassword() {
+        // Get the short URL from your page (you might need to adapt this based on your page structure)
+        var shortUrl = new URLSearchParams(window.location.search).get('shortUrl');
+
+        // Get the password from the input field
+        var passwordInput = document.getElementById('passwordInput');
+        var password = passwordInput.value;
+
+
+
+        // Make an AJAX request to set the password
+        axios.post('/api/url/set-password', null, {
+            params: {
+                shortUrl: shortUrl,
+                password: password
+            }
+        })
+            .then(function (response) {
+                console.log(response.data);
+
+                //Set Pill
+                protectionStatusPill.className = 'badge rounded-pill text-bg-success';
+                protectionStatusPill.classList.add('badge-primary');
+                protectionStatusPill.classList.remove('badge-danger');
+                protectionStatusPill.textContent = 'Protected';
+
+                // Hide the password field after setting the password
+                var passwordField = document.getElementById('passwordField');
+                passwordField.style.display = 'none';
+            })
+            .catch(function (error) {
+                console.error('Error:', error.response.data);
+            });
+    }
+
+
+    // Event listener for checkbox changes
+    var passwordCheckbox = document.getElementById('passwordCheckbox');
+    passwordCheckbox.addEventListener('change', function () {
+        // Automatically set the password to null when the checkbox is unchecked
+        if (!passwordCheckbox.checked) {
+            //setPassword();
+            axios.post('/api/url/reset-password', null, {
+                params: {
+                    shortUrl: shortUrl
+                }
+            })
+                .then(function (response)
+                {
+                    console.log(response.data);
+                });
+            protectionStatusPill.className = 'badge rounded-pill text-bg-warning';
+            protectionStatusPill.classList.add('badge-danger');
+            protectionStatusPill.classList.remove('badge-primary');
+            protectionStatusPill.textContent = 'Unprotected';
+        }
+    });
+
+
+
+    //get profile details in navbar
+    function toggleDropdown() {
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.classList.toggle('hidden');
+    }
+
+
+
+</script>
+
+
+</body>
+</html>
