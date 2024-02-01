@@ -49,3 +49,53 @@ Before you begin, ensure you have the following installed:
 
    ```bash
    git clone https://github.com/yourusername/your-repo.git
+   
+2. Create a MySQL database:
+
+   ```sql
+   CREATE DATABASE url_shortener_db;
+
+2. Update the application.properties file:
+
+>Update the application.properties file in the src/main/resources directory with your database configuration.
+
+
+4. Build and run the application:
+
+   ```bash
+      Ccd your-repo
+      mvn spring-boot:run
+
+5. Access the application at http://localhost:8080
+
+### Deployment
+
+1. Build a deployable JAR:
+
+   ```bash
+   mvn clean install
+   
+2. Deploy the JAR:
+
+>Deploy the generated JAR file to your cloud provider of choice (AWS, GCP, Azure, etc.).
+
+3.Configure environment variables:
+
+>Set environment variables for cloud-specific settings.
+
+
+4. Start the application on the cloud server:
+
+   ```bash
+   java -jar your-repo.jar
+
+### Usage
+1. Shorten URLs by visiting the URL Shortener page.
+2. Access analytics for each shortened URL.
+3. Create and manage bio pages in the Bio section.
+
+### Contributing
+Contributions are welcome! Please follow the contribution guidelines.
+
+### License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
