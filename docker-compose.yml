@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  shortener-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "3306:3306"

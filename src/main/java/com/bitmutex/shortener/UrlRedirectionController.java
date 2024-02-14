@@ -1,10 +1,11 @@
 package com.bitmutex.shortener;
 
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,37 +13,36 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import jakarta.persistence.EntityManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
 public class UrlRedirectionController {
 
-    @Autowired
-    private UrlShortenerRepository urlShortenerRepository;
+    private final UrlShortenerRepository urlShortenerRepository;
 
-    @Autowired
-    private AnalyticsRepository analyticsRepository;
+    private final AnalyticsRepository analyticsRepository;
 
-    @Autowired
-    private UrlShortenerService urlShortenerService;
+    private final UrlShortenerService urlShortenerService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UrlRedirectionController(UrlShortenerRepository urlShortenerRepository, AnalyticsRepository analyticsRepository, UrlShortenerService urlShortenerService, PasswordEncoder passwordEncoder) {
+        this.urlShortenerRepository = urlShortenerRepository;
+        this.analyticsRepository = analyticsRepository;
+        this.urlShortenerService = urlShortenerService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping("{shortUrl}")
     public String submitPassword(@PathVariable String shortUrl,

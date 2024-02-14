@@ -1,6 +1,5 @@
 package com.bitmutex.shortener;
 
-import java.util.Base64;
 import java.util.Date;
 
 public class UrlDetailsDTO {

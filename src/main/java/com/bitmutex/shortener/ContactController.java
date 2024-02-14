@@ -1,13 +1,7 @@
 package com.bitmutex.shortener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -18,14 +12,18 @@ import java.io.IOException;
 @RequestMapping("/contact")
 public class ContactController {
 
-    @Autowired
+    final
     ContactRepository contactRepository;
 
-    @Autowired
-    private SmsService smsService;
+    private final SmsService smsService;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
+
+    public ContactController(ContactRepository contactRepository, SmsService smsService, EmailService emailService) {
+        this.contactRepository = contactRepository;
+        this.smsService = smsService;
+        this.emailService = emailService;
+    }
 
     @GetMapping
     public String showContactForm() {

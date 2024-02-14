@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @Controller
 @RequestMapping("/forgot-username")
 public class ForgotUsernameController {
@@ -22,13 +19,13 @@ public class ForgotUsernameController {
     private final UserService userService;
 
     @Autowired
-    public ForgotUsernameController(UserService userService) {
+    public ForgotUsernameController(UserService userService, JavaMailSender javaMailSender) {
         this.userService = userService;
+        this.javaMailSender = javaMailSender;
     }
 
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
     private String senderEmail;

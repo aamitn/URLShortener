@@ -3,13 +3,11 @@ package com.bitmutex.shortener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import javax.imageio.ImageIO;
@@ -19,8 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "url_shortener")
@@ -203,8 +201,7 @@ public class UrlShortener {
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             // Handle exceptions appropriately
-            e.printStackTrace();
-            return null;
+            throw new UrlShortenerException("Error generating B64QR for url",e);
         }
     }
     private void addLogoToQrCode(BufferedImage qrImage, String logoPath) throws IOException {

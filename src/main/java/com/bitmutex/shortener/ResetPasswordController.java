@@ -1,8 +1,5 @@
 package com.bitmutex.shortener;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +14,12 @@ import java.time.LocalDateTime;
 @RequestMapping("/reset-password")
 public class ResetPasswordController {
 
-    @Autowired
-    private UserService userService; // Assuming you have a UserService
+    private final UserService userService; // Assuming you have a UserService
     public static PasswordEncoder passwordEncoder;
 
-    public ResetPasswordController(PasswordEncoder passwordEncoder) {
+    public ResetPasswordController(PasswordEncoder passwordEncoder, UserService userService) {
         this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -40,7 +37,7 @@ public class ResetPasswordController {
     }
 
     @PostMapping
-    public String processResetPassword(@RequestParam("token") String token, @RequestParam("password") String newPassword, Model model) {
+    public String processResetPassword(@RequestParam("token") String token, @RequestParam("password") String newPassword, Model ignoredModel) {
         UserEntity user = userService.findByResetToken(token);
 
         if (user != null && user.getResetTokenExpiryDateTime().isAfter(LocalDateTime.now())) {

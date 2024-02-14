@@ -1,24 +1,24 @@
 package com.bitmutex.shortener;
 
-import com.bitmutex.shortener.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/subscription")
 public class SubscriptionController {
 
-    @Autowired
-    private SubscriptionService subscriptionService;
+    private final SubscriptionService subscriptionService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public SubscriptionController(SubscriptionService subscriptionService, UserService userService) {
+        this.subscriptionService = subscriptionService;
+        this.userService = userService;
+    }
 
     @PostMapping("/change")
     public ResponseEntity<?> changeSubscription(@RequestParam String username, @RequestParam String newPlanName) {

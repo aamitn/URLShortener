@@ -3,8 +3,6 @@ package com.bitmutex.shortener;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Set;
 
 @Entity
 @Table(name = "user_entity")

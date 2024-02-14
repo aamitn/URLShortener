@@ -2,27 +2,17 @@ package com.bitmutex.shortener;
 
 import com.google.common.util.concurrent.RateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -36,26 +26,28 @@ public class UrlShortenerController {
     @Value("${server.servlet.context-path:}")  // Inject the context path from application properties
     private String contextPath;
 
-    @Autowired
-    private UrlShortenerService service;
+    private final UrlShortenerService service;
 
-    @Autowired
-    private RateLimiter rateLimiter;
+    private final RateLimiter rateLimiter;
 
-    @Autowired
-    private UrlShortenerRepository urlShortenerRepository;
+    private final UrlShortenerRepository urlShortenerRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Value("${cooldown.duration}")
     private long cooldownSeconds;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     private final ConcurrentHashMap<String, Long> cooldownMap = new ConcurrentHashMap<>();
 
+    public UrlShortenerController(UrlShortenerService service, RateLimiter rateLimiter, UrlShortenerRepository urlShortenerRepository, UserRepository userRepository, UserService userService) {
+        this.service = service;
+        this.rateLimiter = rateLimiter;
+        this.urlShortenerRepository = urlShortenerRepository;
+        this.userRepository = userRepository;
+        this.userService = userService;
+    }
 
 
     @PostMapping("/shorten")
@@ -368,7 +360,7 @@ public class UrlShortenerController {
 
 
     protected String getClientId() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String clientIp = request.getRemoteAddr();
         return "ip_" + clientIp; // Prefixing with "ip_" for clarity
     }

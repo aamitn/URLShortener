@@ -1,12 +1,7 @@
 package com.bitmutex.shortener;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.transaction.Transactional;
-import org.hibernate.annotations.GenericGenerator;
-
-import java.util.UUID;
 
 @Entity
 public class OtpEntity {

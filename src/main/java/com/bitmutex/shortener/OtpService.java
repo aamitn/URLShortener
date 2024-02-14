@@ -1,7 +1,5 @@
 package com.bitmutex.shortener;
 
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -10,9 +8,11 @@ import java.util.Optional;
 @Service
 public class OtpService {
 
-    @Autowired
-    private OtpRepository otpRepository;
+    private final OtpRepository otpRepository;
 
+    public OtpService(OtpRepository otpRepository) {
+        this.otpRepository = otpRepository;
+    }
 
 
     // Generate and store OTP for a given username and phone number

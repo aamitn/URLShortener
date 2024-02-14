@@ -1,6 +1,5 @@
 package com.bitmutex.shortener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -15,11 +14,16 @@ import java.util.Random;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
-    @Autowired
+    final
     UserRepository userRepository;
 
-    @Autowired
+    final
     UserService userService;
+
+    public CustomOAuth2UserService(UserRepository userRepository, UserService userService) {
+        this.userRepository = userRepository;
+        this.userService = userService;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -79,8 +83,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
 
     private UserEntity registerNewOAuth2User(RegistrationRequest request) {
         // Implement logic to register a new user based on OAuth2 attributes
-        UserEntity newUser = userService.registerNewUser(request);
-        return newUser;
+        return userService.registerNewUser(request);
     }
 
     public String randAlphaString() {
@@ -89,12 +92,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService  {
         int targetStringLength = 10;
         Random random = new Random();
 
-        String generatedString = random.ints(leftLimit, rightLimit + 1)
+        return random.ints(leftLimit, rightLimit + 1)
                 .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
-
-        return generatedString;
     }
 }

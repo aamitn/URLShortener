@@ -16,7 +16,7 @@
     </appender>
 
     <!-- Root logger -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="file"/>
     </root>
 </configuration>

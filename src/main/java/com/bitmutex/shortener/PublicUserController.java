@@ -1,6 +1,5 @@
 package com.bitmutex.shortener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +13,11 @@ import java.util.Map;
 @RequestMapping("/api/user/public/check")
 public class PublicUserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public PublicUserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/username")
     public ResponseEntity<Map<String, Boolean>> checkUsernameExists(@RequestParam String username) {

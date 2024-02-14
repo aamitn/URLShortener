@@ -3,8 +3,6 @@ package com.bitmutex.shortener;
 // UpdateUserRequest.java
 
 
-import java.util.Optional;
-
 public class UpdateUserRequest {
     public String  getUsername() {
         return username;

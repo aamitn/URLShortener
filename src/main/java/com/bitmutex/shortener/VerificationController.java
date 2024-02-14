@@ -1,27 +1,29 @@
 package com.bitmutex.shortener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Controller
 public class VerificationController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private OtpService otpService;
+    private final OtpService otpService;
 
+    public VerificationController(UserService userService, UserRepository userRepository, OtpService otpService) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.otpService = otpService;
+    }
 
 
     @GetMapping("/verify-registration")
@@ -32,7 +34,7 @@ public class VerificationController {
 
 
     @PostMapping("/verify-registration")
-    public ResponseEntity<String>  verifyRegistration(@RequestParam String otp, @RequestParam String email, Model model) {
+    public ResponseEntity<String>  verifyRegistration(@RequestParam String otp, @RequestParam String email, Model ignoredModel) {
 
        //String email = model.getAttribute("email").toString();
 

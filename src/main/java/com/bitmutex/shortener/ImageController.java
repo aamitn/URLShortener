@@ -1,7 +1,6 @@
 package com.bitmutex.shortener;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +15,11 @@ import java.util.Map;
 
 public class ImageController {
 
-    @Autowired
-    private ImageService imageService;
+    private final ImageService imageService;
 
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
 
     @PostMapping("/upload")
@@ -51,7 +52,6 @@ public class ImageController {
 
     @GetMapping("/{imageId}")
     public ResponseEntity<byte[]> getImageById(@PathVariable Long imageId) {
-        ResponseEntity<byte[]> image = imageService.getImageContent(imageId);
-        return image;
+        return imageService.getImageContent(imageId);
     }
 }

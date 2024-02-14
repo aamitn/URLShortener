@@ -1,6 +1,5 @@
 package com.bitmutex.shortener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,18 +8,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
+
+    public ImageServiceImpl(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
 
     @Override
     public String uploadImage(MultipartFile file) {
@@ -46,8 +46,7 @@ public class ImageServiceImpl implements ImageService {
             return "/api/images/" + savedImage.getId();
         } catch (IOException e) {
             // Handle the exception (e.g., log or throw a custom exception)
-            e.printStackTrace();
-            return null;
+            throw new UrlShortenerException("Error uploading image",e);
         }
     }
 
@@ -90,8 +89,7 @@ public class ImageServiceImpl implements ImageService {
             return twelveDigitId;
         } catch (NoSuchAlgorithmException e) {
             // Handle the exception (e.g., log or throw a custom exception)
-            e.printStackTrace();
-            return 0;
+            throw new UrlShortenerException("Error generating unique ID for Image",e);
         }
     }
 }

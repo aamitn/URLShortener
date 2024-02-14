@@ -3,7 +3,6 @@ package com.bitmutex.shortener;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
-import java.util.Map;
 
 public class CustomUserDetails extends org.springframework.security.core.userdetails.User {
     private final Long userId;

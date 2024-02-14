@@ -5,17 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -30,17 +31,13 @@ import java.util.regex.Pattern;
 @Slf4j
 public class UrlShortenerService {
 
-    @Autowired
-    private UrlShortenerRepository repository;
+    private final UrlShortenerRepository repository;
 
-    @Autowired
-    private SubscriptionService subscriptionService;
+    private final SubscriptionService subscriptionService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private HttpServletRequest request;  // Inject the HttpServletRequest
+    private final HttpServletRequest request;  // Inject the HttpServletRequest
 
     @Value("${server.port}")  // Inject the server port from application properties
     private String serverPort;
@@ -51,8 +48,15 @@ public class UrlShortenerService {
     @Value("${server.base.url}")
     private String serverBaseUrl;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UrlShortenerService(UrlShortenerRepository repository, SubscriptionService subscriptionService, UserService userService, HttpServletRequest request, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.subscriptionService = subscriptionService;
+        this.userService = userService;
+        this.request = request;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public String shortenUrl(String jsonInput) {
         try {
@@ -79,9 +83,8 @@ public class UrlShortenerService {
             String linkType = "short";
 
 
-
             // Get the user entity (you need to implement a method to fetch the current user entity)
-            UserEntity userEntity = userService.findById(userId).get();
+            UserEntity userEntity = userService.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User with ID: "+userId+" not found"));
 
             // Check if the user has exceeded the maximum short URL limit
             int maxShortUrlLimit =  Integer.parseInt(subscriptionService.getCurrentSubscriptionDetails(userEntity).get("maxShortUrl").toString());
@@ -205,12 +208,12 @@ public class UrlShortenerService {
         }
 
         // Regular expression for a simple URL format check
-        String urlRegex = "^(https?://)?([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})(/[a-zA-Z0-9-._?%&=]*)?$";
+        String urlRegex = "^(https?://)?([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})(/.*)?$";
 
         try {
             // Check if the URL has a scheme, if not, assume it is HTTP
             if (!originalUrl.contains("://")) {
-                originalUrl = "http://" + originalUrl;
+                originalUrl = "https://" + originalUrl;
             }
 
             // Basic URL format check using regex
@@ -289,7 +292,7 @@ public class UrlShortenerService {
             Long userId = getCurrentUserId();
 
             // Get the user entity (you need to implement a method to fetch the current user entity)
-            UserEntity userEntity = userService.findById(userId).get();
+            UserEntity userEntity = userService.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User with ID: "+userId+" not found"));
 
             // Check if the user has exceeded the bio pages limit
             int currentBioPagesCount = repository.countBioPagesByUserId(userId);
@@ -330,13 +333,9 @@ public class UrlShortenerService {
 
     public List<UrlShortener> getUrlsByUserId(Long userId) {
         try {
-            // Assume that UrlDetails is an entity representing the details of a URL
-            List<UrlShortener> urlDetailsList = repository.findByUserId(userId);
-
-            // You might need to convert entities to a DTO or customize the response based on your needs
-            // For simplicity, let's assume UrlDetails is the entity itself
-
-            return urlDetailsList;
+            // Assume that UrlDetails is an entity representing the details of a URL  For simplicity, let's assume UrlDetails is the entity itself
+            // We might need to convert entities to a DTO or customize the response based on your needs
+            return repository.findByUserId(userId);
         } catch (Exception e) {
             // Handle exceptions or log them as needed
             throw new UrlShortenerException("Error retrieving URLs by user ID", e);
@@ -409,16 +408,30 @@ public class UrlShortenerService {
     }
 
 
-    private boolean isValidHttpResponse(String originalUrl) {
+    private static boolean isValidHttpResponse(String originalUrl) {
         try {
-            URL url = new URL(originalUrl);
+            final int CONNECT_TIMEOUT_MS = 1500; // 2 seconds
+            final int READ_TIMEOUT_MS = 1500;    // 2 seconds
+
+            URI uri = URI.create(originalUrl);
+            URL url = uri.toURL();
+
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
+            connection.setReadTimeout(READ_TIMEOUT_MS);
+            connection.setRequestProperty("User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+                            "(KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
 
             int responseCode = connection.getResponseCode();
-            return responseCode == HttpURLConnection.HTTP_OK;
+
+            System.out.println("URL VALIDATION RESPONSE CODE: " + responseCode + " for URL " + originalUrl);
+
+            // Consider both 200 (HTTP_OK) and 303 (HTTP_SEE_OTHER) as valid responses
+            return responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_SEE_OTHER;
         } catch (IOException e) {
-            return false;
+            throw new UrlShortenerException("Validation Error : Bad Response",e);
         }
     }
 }

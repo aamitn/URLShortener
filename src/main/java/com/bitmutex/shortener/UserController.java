@@ -1,15 +1,9 @@
 package com.bitmutex.shortener;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,14 +15,14 @@ import java.net.URL;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
-    @Autowired
-    private OtpService otpService;
+    private final OtpService otpService;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, OtpService otpService, EmailService emailService) {
         this.userService = userService;
+        this.otpService = otpService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/register")
@@ -103,8 +97,7 @@ public class UserController {
     @GetMapping("/profile-picture")
     public ResponseEntity<byte[]> getUserProfilePicture(@RequestParam String username) {
         try {
-            ResponseEntity<byte[]> image = userService.getProfilePictureByUsername(username);
-            return image;
+            return userService.getProfilePictureByUsername(username);
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
