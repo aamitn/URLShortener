@@ -123,6 +123,12 @@ Before you begin, ensure you have the following installed:
     
     Access the application at `http://localhost:8080/`.
     
+6.  **Adjust Configuration (Optional):** If you need to customize the application configuration after deployment, you can find the **application.properties** file within the deployed WAR file. THe file can be accesses as :
+    
+    ```plaintext
+    vi /path/to/tomcat/webapps/your-app/WEB-INF/classes/application.properties
+    ```
+    
 
 ### Usage
 
