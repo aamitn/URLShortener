@@ -48,29 +48,29 @@ Before you begin, ensure you have the following installed:
 1.  Clone the repository:
     
     ```plaintext
-    git clone https://github.com/yourusername/your-repo.git
+    git clone https://github.com/aamitn/URLShortener.git
     ```
     
 2.  **Apply the Database Schema:**
     
     Execute the provided **db\_schema.sql** file to set up the necessary tables and schema for the application. This script will also create the required database.
     
-3.  ```plaintext
+    ```plaintext
     mysql -u your_username -p < path/to/db_schema.sql
     ```
     
-4.  Update the application.properties file:
-
-> Update the application.properties file in the src/main/resources directory with your database configuration.
-
-1.  Build and run the application:
+3.  Update the application.properties file:
+    
+     Update the application.properties file in the src/main/resources directory with your database configuration.
+    
+4.  Build and run the application:
     
     ```plaintext
-       Ccd your-repo
+       cd URLShortener
        mvn spring-boot:run
     ```
     
-2.  Access the application at http://localhost:8080
+5.  Access the application at http://localhost:8080
 
 ### Deployment
 
