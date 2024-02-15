@@ -180,6 +180,11 @@ In the **docker-compose.yml** file, you can customize the build source for the S
 
 Comment or uncomment the relevant lines based on whether you want to use the pre-built image from Docker Hub or build from the local Dockerfile.
 
+
+### App Health
+* Check application status from the /monitoring page example  http://localhost:8080/monitoring
+
+
 ### Usage Cases
 
 1.  Shorten URLs by visiting the URL Shortener page.
