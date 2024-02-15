@@ -1,5 +1,10 @@
 # syntax=docker/dockerfile:1
 
+# Add the following lines to tag the image (replace 'your_username' and 'shortener-app' with your Docker Hub username and repository name)
+ARG VERSION=latest
+ARG IMAGE_NAME=bigwiz/shortener
+ARG TAG=$VERSION
+
 # Stage 1: Build the application
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
@@ -19,8 +24,9 @@ ENV CATALINA_BASE /usr/local/tomcat
 ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
 
+
 # Copy the WAR file from the builder stage
-COPY target/shortener.war $CATALINA_BASE/webapps/
+COPY --from=builder /URLShortener/target/shortener.war  $CATALINA_BASE/webapps/
 
 
 # Add configuration for document base path
@@ -43,5 +49,4 @@ RUN chmod +x /usr/local/tomcat/shortener.sh
 
 # Start Tomcat and MariaDB using the startup script
 CMD ["sh", "/usr/local/tomcat/shortener.sh"]
-
 

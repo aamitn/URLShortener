@@ -2,9 +2,36 @@ version: '3.8'
 
 services:
   shortener-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    labels:
+      - "TUSC The URL Shortener Company"
+
+    #Build from docker hub image .Comment/Uncomment Below
+    image: nmpl/shortener:latest
+
+ #Build from local Dockerfile.Comment/Uncomment Below
+ #   build:
+ #     context: .
+ #     dockerfile: Dockerfile
+
     ports:
       - "8080:8080"
       - "3306:3306"
+
+    volumes:
+      - shortener-db-data:/var/lib/mysql
+      - type: volume
+        source: shortener-db-data
+        target: /var/lib/mysql
+
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/monitoring" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+
+volumes:
+  shortener-db-data:
+    name: shortener-db-data
