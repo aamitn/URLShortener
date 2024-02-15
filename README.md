@@ -1,14 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
 ## ![](https://i.ibb.co/4MFScFw/tusc-logo.png)**TUSC - The URL Shortener Company**
 <img src="https://i.ibb.co/4MFScFw/tusc-logo.png" width="20" height="20">
 
