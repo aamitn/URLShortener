@@ -1,4 +1,16 @@
-## ![](https://33333.cdn.cke-cs.com/kSW7V9NHUXugvhoQeFaf/images/849f04bc0b71c7572b553b2b283f7590067b036c87a71ba9.webp)**TUSC - The URL Shortener Company**
+
+
+
+
+
+
+
+
+
+
+
+## ![](https://i.ibb.co/4MFScFw/tusc-logo.png)**TUSC - The URL Shortener Company**
+<img src="https://i.ibb.co/4MFScFw/tusc-logo.png" width="20" height="20">
 
 [![Build Status](https://travis-ci.org/yourusername/your-repo.svg?branch=main)](https://travis-ci.org/aamitn/URLShortener)[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)[![GitHub last commit](https://img.shields.io/github/last-commit/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/commits/main)[![GitHub issues](https://img.shields.io/github/issues/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/issues)[![GitHub pull requests](https://img.shields.io/github/issues-pr/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/pulls)[![GitHub contributors](https://img.shields.io/github/contributors/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/graphs/contributors)  
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/yourusername/your-repo.svg?style=social)](https://twitter.com/intent/tweet?url=https%3A%2F%2Fgithub.com%2Faamitn%2FURLShortener&text=Check%20out%20this%20awesome%20URL%20Shortener%20and%20Bio%20Page%20Application&via=yourtwitterhandle)
