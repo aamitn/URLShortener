@@ -36,6 +36,24 @@ This project is an enterprise-grade URL shortener and bio page application devel
 *   Forgot password and username recovery functionality.
 *   OPEN API 3.0 Complaint REST API set, with extensive docs.
 
+## Tech Stack:
+
+* Java (JDK 21): The core programming language for the application.
+* Maven 3: A build automation and project management tool. Used for managing dependencies and building the application.
+* MySQL/Mariadb: Relational database management system used for data storage.
+* Spring Boot: A framework that simplifies the development of Java applications, providing convention over configuration and a variety of built-in features.
+* Logger (Logback): Logback is a logging framework for Java applications. It's the default logging framework in Spring Boot.
+* Templating Engine (Thymeleaf): Thymeleaf is a modern server-side Java template engine for web and standalone environments. It is a well-integrated part of the Spring ecosystem.
+* AJAX (Asynchronous JavaScript and XML): A technique for creating dynamic and interactive user interfaces. It allows updating parts of a web page without reloading the entire page.
+* RESTful API: A standard architectural style for building web services. The application provides RESTful APIs for various functionalities.
+* OpenAPI 3.0: A specification for building APIs that allows for describing, producing, consuming, and visualizing RESTful web services.
+* Docker: A platform for developing, shipping, and running applications in containers. Used for containerizing the application.
+* Git: A distributed version control system used for tracking changes in the source code.
+* Kubernetes: A container orchestration platform used for automating the deployment, scaling, and management of containerized applications.
+* Swagger UI: A tool that helps design, build, document, and consume RESTful APIs. It's often used with OpenAPI specifications.
+* Tailwind CSS: A utility-first CSS framework that makes it easy to design and build modern, responsive user interfaces.
+* Flowbite: A design system and UI toolkit for building responsive web applications.
+
 ## Getting Started
 
 ### Prerequisites
@@ -46,6 +64,7 @@ Before you begin, ensure you have the following installed:
 *   Maven
 *   MySQL
 *   Your favorite IDE (IntelliJ, Eclipse, etc.)
+
 
 ### Local Setup
 
