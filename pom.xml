@@ -276,5 +276,12 @@
 
     </profiles>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>shortener</name>
+            <url>https://maven.pkg.github.com/aamitn/URLShortener</url>
+        </repository>
+    </distributionManagement>
 
 </project>
