@@ -3,10 +3,11 @@
 [![buddy pipeline](https://app.buddy.works/amitnandileo-2/urlshortener/pipelines/pipeline/483649/badge.svg?token=fb16d4ceb25aaee899aeebeb8f9d57239dd800defc2afb65a0176c36d32bd464)](https://app.buddy.works/amitnandileo-2/urlshortener/pipelines/pipeline/483649)  
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)[![GitHub last commit](https://img.shields.io/github/last-commit/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/commits/main)[![GitHub issues](https://img.shields.io/github/issues/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/issues)[![GitHub pull requests](https://img.shields.io/github/issues-pr/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/pulls)[![GitHub contributors](https://img.shields.io/github/contributors/aamitn/URLShortener.svg)](https://github.com/aamitn/URLShortener/graphs/contributors)  
 [![Twitter](https://img.shields.io/twitter/url/https/github.com/yourusername/your-repo.svg?style=social)](https://twitter.com/intent/tweet?url=https%3A%2F%2Fgithub.com%2Faamitn%2FURLShortener&text=Check%20out%20this%20awesome%20URL%20Shortener%20and%20Bio%20Page%20Application&via=yourtwitterhandle)
+[![Docker Image Size](https://badgen.net/docker/size/trueosiris/godaddypy?icon=docker&label=image%20size)](https://hub.docker.com/r/nmpl/shortener)
 
 An enterprise-grade, powerful and scalable URL shortener with integrated bio pages built using Spring Boot.
 
-<table><tbody><tr><td>Maven Package</td><td><a href="https://onlinemarkdowneditor.dev/">Free Collaborative Markdown Editor - onlinemarkdowneditor.dev</a></td></tr><tr><td>Docker Image</td><td><a href="https://onlinemarkdowneditor.dev/">Free Collaborative Markdown Editor - onlinemarkdowneditor.dev</a></td></tr></tbody></table>
+<table><tbody><tr><td>Maven Package</td><td><a href="https://github.com/aamitn/URLShortener/packages/2069528">Github Packages - com.bitmutex.shortener</a></td></tr><tr><td>Docker Image</td><td><a href="https://hub.docker.com/r/nmpl/shortener">DockerHub - nmpl/shortener:latest</a></td></tr></tbody></table>
 
 ## Table of Contents
 
