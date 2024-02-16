@@ -66,6 +66,24 @@ Before you begin, ensure you have the following installed:
 *   Your favorite IDE (IntelliJ, Eclipse, etc.)
 
 
+###  1-Click Local Installation <a href="https://github.com/aamitn/URLShortener/blob/master/installers/install.bat">Windows</a> | <a href="https://github.com/aamitn/URLShortener/packages/2069528">Linux</a> 
+
+### Windows
+1. Open a Command Prompt with administrator privileges.
+2. Navigate to the project's `installers` folder.
+3. Run the `install.bat` file by double-clicking on it or using the following command:
+   ```batch
+   install.bat
+
+### Linux
+1. Navigate to the project's installers folder.
+2. Run the `install.sh` using the following command:
+   ```bash
+   chmod +x install.sh
+   ./install.sh
+3. Follow the on-screen instructions.
+
+
 ### Local Setup
 
 1.  Clone the repository:
