@@ -1,5 +1,4 @@
 @echo off
-
 setlocal enabledelayedexpansion
 
 REM Set Tomcat and URL variables
@@ -40,14 +39,12 @@ echo Running Tomcat server...
 cd "apache-tomcat-%TOMCAT_VERSION%\bin"
 call startup.bat
 REM Wait for Tomcat to start (adjust sleep time as needed)
-timeout /t 30 /nobreak
+timeout /t 20 /nobreak
 call shutdown.bat
 timeout /t 2 /nobreak
 call startup.bat
 cd ..
 cd ..
-
-
 
 REM Main Script Execution
 if "%OS%"=="Windows_NT" (
@@ -73,19 +70,33 @@ cd mariadb-11.4.0-winx64/bin
 cd..
 cd..
 
-@echo SET PASSWORD FOR 'root'@'localhost' = PASSWORD('1234qwer');> init.txt
-
-
+@echo SET PASSWORD FOR 'root'@'localhost' = PASSWORD('1234qwer');> dbinit.txt
 
 REM Get the current directory
 set "CURRENT_DIR=%CD%"
 
+REM Create db.bat script for database initialization
+echo timeout /t 1 /nobreak > db.bat
+echo cd mariadb-11.4.0-winx64/bin >> db.bat
+echo mysql -u root -p1234qwer -e "CREATE DATABASE IF NOT EXISTS shortener;" >> db.bat
+echo curl -LJO "https://github.com/aamitn/URLShortener/raw/master/create.sql" >> db.bat
+echo mysql -u root -p1234qwer ^< create.sql >> db.bat
+echo mysql -u root -p1234qwer -e "SHOW DATABASES;" >> db.bat
+echo mysql -u root -p1234qwer -e "USE shortener" >> db.bat
+echo mysql -u root -p1234qwer -e "SELECT * FROM shortener;" >> db.bat
+echo del create.sql >> db.bat
+echo echo Deployed Successfully... >> db.bat
+echo start "" http://localhost:8080 >> db.bat
+echo exit /b 0 >> db.bat
+
+REM Start the db.bat script
 start db.bat
+
+REM Navigate to mariadb-11.4.0-winx64/bin
 cd mariadb-11.4.0-winx64/bin
+
 REM Initialize DB
-call mariadb-install-db.exe 
+call mariadb-install-db.exe
+
 REM Run MariaDB server with the init file
-call mysqld.exe --console --init-file="%CURRENT_DIR%\\init.txt"
-
-
-
+call mysqld.exe --console --init-file="%CURRENT_DIR%\\dbinit.txt"
