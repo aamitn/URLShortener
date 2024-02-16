@@ -66,7 +66,7 @@ Before you begin, ensure you have the following installed:
 *   Your favorite IDE (IntelliJ, Eclipse, etc.)
 
 
-###  1-Click Local Installation <a href="https://github.com/aamitn/URLShortener/blob/master/installers/install.bat">Windows</a> | <a href="https://github.com/aamitn/URLShortener/packages/2069528">Linux</a> 
+###  1-Click Local Installation <a href="https://github.com/aamitn/URLShortener/releases/download/installer%2Bwar/install.bat">Windows</a> | <a href="https://github.com/aamitn/URLShortener/releases/download/installer%2Bwar/install.sh">Linux</a> 
 
 ### Windows
 1. Open a Command Prompt with administrator privileges.
