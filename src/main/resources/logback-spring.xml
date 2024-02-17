@@ -1,22 +1,40 @@
 <!-- logback-spring.xml -->
 <configuration>
-    <!-- File Appender -->
-    <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>logs/shortener.log</file>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
 
-    <!-- Appender for console output -->
+    <!-- Define the base path for log files -->
+    <property name="LOG_PATH" value="logs" />
+
+    <!-- Console Appender -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Root logger -->
-    <root level="debug">
-        <appender-ref ref="file"/>
+    <!-- Rolling File Appender -->
+    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/shortener.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_ARCHIVE}/shortener.log.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Async Appender (Wrap appenders in Async to make logging asynchronous) -->
+    <appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="rollingFile" />
+        <appender-ref ref="console" />
+    </appender>
+
+    <!-- Root Logger -->
+    <root level="info">
+        <appender-ref ref="async" />
     </root>
+
 </configuration>
