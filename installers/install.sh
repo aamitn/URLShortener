@@ -3,7 +3,7 @@
 # Set Tomcat and URL variables
 TOMCAT_VERSION="10.0.0-M15"
 TOMCAT_URL="https://archive.apache.org/dist/tomcat/tomcat-10/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
-WAR_URL="https://github.com/aamitn/URLShortener/releases/download/WAR/shortener.war"
+WAR_URL="https://github.com/aamitn/URLShortener/releases/download/final/shortener.war"
 SERVER_XML_CONTEXT="<Context path=\"\" docBase=\"shortener\" debug=\"0\" reloadable=\"true\"></Context>"
 SQL_FILE_URL="https://github.com/aamitn/URLShortener/raw/master/create.sql"
 
