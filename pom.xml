@@ -180,10 +180,9 @@
     <build>
         <finalName>${project.artifactId}</finalName>
 
-        <pluginManagement>
+
 
         <plugins>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -200,20 +199,6 @@
                         </property>
                     </properties>
                 </configuration>
-
-            </plugin>
-            <plugin>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
 
@@ -245,9 +230,9 @@
                 </executions>
             </plugin>
 
-
         </plugins>
-        </pluginManagement>
+
+
     </build>
 
 
