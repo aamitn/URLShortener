@@ -139,7 +139,7 @@ Before you begin, ensure you have the following installed:
         *   Navigate to the "WAR file to deploy" section.
         *   Choose the `shorten.war` file using the file upload button.
         *   Click the "Deploy" button.
-3.  **Configure environment variables:**
+3.  **Configure Variables on deployed war:**
 
     Set environment variables for cloud-specific settings.
 
@@ -246,7 +246,27 @@ Wait until the pod is in the "Running" state.
     Access your application using the provided external IP.
 
 
+### SMS Service Configuration
 
+To configure the SMS service, you need to specify parameters related to the SMS provider in the `application.properties` file.
+
+* #### Managed SMS Provider (Uses HttpSms API from https://httpsms.com/)
+  * Generate API Key : https://httpsms.com/settings/
+  * HttpSms API Docs : https://api.httpsms.com/
+
+  ```properties
+    sms.provider=managed
+    managed.sms.api.key=your_managed_sms_api_key
+    managed.sms.phone-number=123456789
+  
+* #### Self-hosted SMS Provider (Host our open source android-based SMS web gateway : https://api.httpsms.com/)
+
+    ```properties
+    sms.provider=selfhosted
+    selfhosted.gateway.url=https://your-smsgateway-url/index.php
+    selfhosted.device.id=your_device_id
+    selfhosted.hash=your_device_hash
+  
 ### App Health
 
 *   Check application status from the /monitoring page example http://localhost:8080/monitoring
