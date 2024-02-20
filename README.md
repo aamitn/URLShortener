@@ -17,7 +17,9 @@ An enterprise-grade, powerful and scalable URL shortener with integrated bio pag
     *   [Prerequisites](#prerequisites)
     *   [Local Setup](#local-setup)
     *   [Deployment](#deployment)
-*   [Usage](#usage)
+    *   [Cloud Native Deployment](#cloud-native-deployment)
+*   [SMS Configuration](#sms-service-configuration)  
+*   [Use Cases](#use-cases)
 *   [Contributing](#contributing)
 *   [License](#license)
 
@@ -83,6 +85,8 @@ Before you begin, ensure you have the following installed:
    ./install.sh
 3. Follow the on-screen instructions.
 
+##### Finally, Select Application Server : Tomcat/Wildfly
+
 
 ### Local Setup
 
@@ -90,6 +94,7 @@ Before you begin, ensure you have the following installed:
 
     ```plaintext
     git clone https://github.com/aamitn/URLShortener.git
+    cd URLShortener
     ```
 
 2.  **Apply the Database Schema:**
@@ -97,18 +102,17 @@ Before you begin, ensure you have the following installed:
     Execute the provided **db\_schema.sql** file to set up the necessary tables and schema for the application. This script will also create the required database.
 
     ```plaintext
-    mysql -u your_username -p < path/to/db_schema.sql
+    mysql -u your_username -p{your_password} < create.sql
     ```
-
+    
 3.  Update the application.properties file:
 
-    Update the application.properties file in the src/main/resources directory with your database configuration.
+    * Update the <mark>application.properties</mark> file in the src/main/resources directory with your application configuration.
 
 4.  Build and run the application:
 
     ```plaintext
-       cd URLShortener
-       mvn spring-boot:run
+    mvn spring-boot:run
     ```
 
 5.  Access the application at http://localhost:8080
@@ -137,7 +141,7 @@ Before you begin, ensure you have the following installed:
         *   Access the Tomcat Manager web interface at `http://localhost:8080/manager/html` (replace with your Tomcat server address).
         *   Log in with your Tomcat manager credentials.
         *   Navigate to the "WAR file to deploy" section.
-        *   Choose the `shorten.war` file using the file upload button.
+        *   Choose the `shortener.war` file using the file upload button.
         *   Click the "Deploy" button.
 3.  **Configure Variables on deployed war:**
 
@@ -167,7 +171,7 @@ Before you begin, ensure you have the following installed:
 6.  **Adjust Configuration (Optional):** If you need to customize the application configuration after deployment, you can find the **application.properties** file within the deployed WAR file. THe file can be accesses as :
 
     ```plaintext
-    vi /path/to/tomcat/webapps/your-app/WEB-INF/classes/application.properties
+    vi /path/to/tomcat/webapps/shortener/WEB-INF/classes/application.properties
     ```
 
 
@@ -193,6 +197,7 @@ To deploy the URL Shortener application on your cloud environment, follow the st
     docker build -t shortener:latest .
     docker run -p 8080:8080 -p 3306:3306 shortener:latest
     ```
+<p style="text-align: center;"> OR </p>
 
 3.  **Use Our Pre-built Image with Docker Compose:**
 
@@ -271,7 +276,7 @@ To configure the SMS service, you need to specify parameters related to the SMS 
 
 *   Check application status from the /monitoring page example http://localhost:8080/monitoring
 
-### Usage Cases
+### Use Cases
 
 1.  Shorten URLs by visiting the URL Shortener page.
 2.  Access analytics for each shortened URL.
