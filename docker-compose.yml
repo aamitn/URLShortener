@@ -4,7 +4,7 @@ volumes:
   data:
 
 services:
-  db:
+  database:
     image: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: 1234qwer
@@ -39,5 +39,5 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - database
 

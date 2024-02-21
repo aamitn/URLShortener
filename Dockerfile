@@ -26,7 +26,7 @@ WORKDIR /URLShortener
 # Example real world db access url : mysql://127.0.0.1:3306
 # Example Docker  db access url : mysql://database:3306 (container name is datbase)
 # Change the database ip in app config to the database docker container name/service
-RUN sed -i "s|database.ip=127.0.0.1|database.ip=db |g" src/main/resources/application.properties
+RUN sed -i "s|database.ip=127.0.0.1|database.ip=database |g" src/main/resources/application.properties
 
 # Build the application
 RUN mvn clean install
