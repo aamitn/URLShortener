@@ -180,8 +180,6 @@
     <build>
         <finalName>${project.artifactId}</finalName>
 
-
-
         <plugins>
 
             <plugin>
@@ -200,7 +198,6 @@
                     </properties>
                 </configuration>
             </plugin>
-
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -231,7 +228,6 @@
             </plugin>
 
         </plugins>
-
 
     </build>
 
