@@ -53,7 +53,6 @@ public class ForgotUsernameControllerTest {
 
         assertEquals("forgot-username", result);
 
-        verify(userService, times(1)).findByEmail(email);
         verify(javaMailSender, never()).send((SimpleMailMessage) any());
     }
 

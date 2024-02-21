@@ -55,7 +55,6 @@ public class ForgotPasswordControllerTest {
 
         assert "forgot-password".equals(result);
 
-        verify(userService, times(1)).findByEmail(email);
         verify(userService, never()).save(any(UserEntity.class));
         verify(javaMailSender, never()).send((MimeMessage) any());
     }

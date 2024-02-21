@@ -1,8 +1,7 @@
 version: '3.8'
 
 volumes:
-  dbdata:
-    name: dbdata
+  data:
 
 services:
   db:
@@ -14,9 +13,6 @@ services:
       MYSQL_PASSWORD: 1234qwer
     volumes:
       - data:/var/lib/mysql
-      - type: volume
-        source: dbdata
-        target: /var/lib/mysql
       - ./create.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
@@ -33,7 +29,7 @@ services:
   #    dockerfile: Dockerfile
 
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/monitoring" ]
+      test: [ "CMD-SHELL", "curl", "-f", "http://localhost:8080/monitoring" ]
       interval: 30s
       timeout: 10s
       retries: 3

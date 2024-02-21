@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+#syntax=docker/dockerfile:1
 
 # Add the following lines to tag the image (replace 'your_username' and 'shortener-app' with your Docker Hub username and repository name)
 ARG VERSION=latest
