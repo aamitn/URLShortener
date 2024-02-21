@@ -39,4 +39,6 @@ build/
 shortener_db_schema.sql
 /out/
 /logs/
+logs/
 /test-output/
+test-output/
