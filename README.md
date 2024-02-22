@@ -22,7 +22,7 @@ An enterprise-grade, powerful and scalable URL shortener with integrated bio pag
 *   [Use Cases](#use-cases)
 *   [Contributing](#contributing)
 *   [License](#license)
-
+***
 ## Overview
 
 This project is an enterprise-grade URL shortener and bio page application developed with Spring Boot. It provides a robust solution for shortening URLs and creating bio pages for users. The application is designed for scalability and includes features such as analytics, user management, and subscription plans.
@@ -56,6 +56,8 @@ This project is an enterprise-grade URL shortener and bio page application devel
 * Tailwind CSS: A utility-first CSS framework that makes it easy to design and build modern, responsive user interfaces.
 * Flowbite: A design system and UI toolkit for building responsive web applications.
 
+***
+
 ## Getting Started
 
 ### Prerequisites
@@ -87,6 +89,7 @@ Before you begin, ensure you have the following installed:
 
 ##### Finally, Select Application Server : Tomcat/Wildfly
 
+***
 
 ### Local Setup
 
@@ -99,7 +102,7 @@ Before you begin, ensure you have the following installed:
 
 2.  **Apply the Database Schema:**
 
-    Execute the provided **db\_schema.sql** file to set up the necessary tables and schema for the application. This script will also create the required database.
+    Execute the provided `create.sql` file to set up the necessary tables and schema for the application. This script will also create the required database.
 
     ```plaintext
     mysql -u your_username -p{your_password} < create.sql
@@ -107,9 +110,9 @@ Before you begin, ensure you have the following installed:
     
 3.  Update the application.properties file:
 
-    * Update the <mark>application.properties</mark> file in the src/main/resources directory with your application configuration.
+    * Update the `application.properties` file in the src/main/resources directory with your application configuration.
 
-4.  Build and run the application:
+4.  Build and run the application: 
 
     ```plaintext
     mvn spring-boot:run
@@ -117,7 +120,9 @@ Before you begin, ensure you have the following installed:
 
 5.  Access the application at http://localhost:8080
 
-### Deployment
+***
+
+### Deployment Setup
 
 1.  **Build a deployable WAR:**
 
@@ -173,7 +178,7 @@ Before you begin, ensure you have the following installed:
     ```plaintext
     vi /path/to/tomcat/webapps/shortener/WEB-INF/classes/application.properties
     ```
-
+***
 
 ### Cloud Native Deployment
 
@@ -183,6 +188,9 @@ To deploy the URL Shortener application on your cloud environment, follow the st
 
 *   [Docker](https://www.docker.com/get-started)
 *   [Docker Compose](https://docs.docker.com/compose/install/)
+*   [Kubernetes/K8s](https://kubernetes.io/docs/setup/)
+*   [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+*   [Helm](https://helm.sh/docs/intro/install/)
 
 1.  **Clone the Repository:**
 
@@ -190,31 +198,33 @@ To deploy the URL Shortener application on your cloud environment, follow the st
     git clone https://github.com/your-username/URLShortener.git
     cd URLShortener
     ```
+2.  ***Deploy Using Docker***
 
-2.  **Build and Run Your Own Image:**
+*    Build and Run Your Own Image:
 
-    ```plaintext
-    docker build -t shortener:latest .
-    docker run -p 8080:8080 -p 3306:3306 shortener:latest
-    ```
+        ```plaintext
+        docker build -t shortener:latest .
+        docker run -p 8080:8080 -p 3306:3306 shortener:latest
+        ```
+     
 <p style="text-align: center;"> OR </p>
 
-3.  **Use Our Pre-built Image with Docker Compose:**
+*  Use Our Pre-built Image with Docker Compose:
 
     ```plaintext
     docker compose build
     docker compose up
     ```
 
-4.  **Customizing Docker Compose Configuration:**
+*   Customizing Docker Compose Configuration:
 
-    In the **docker-compose.yml** file, you can customize the build source for the Shortener service:
+    In the `docker-compose.yml` file, you can customize the build source for the Shortener service:
 
     ```plaintext
-        #Build from docker hub image .Comment/Uncomment Below
-        image: nmpl/shortener:latest
+    # Build from docker hub image .Comment/Uncomment Below
+    image: nmpl/shortener:latest
     
-     #Build from local Dockerfile.Comment/Uncomment Below
+     # Build from local Dockerfile.Comment/Uncomment Below
      #   build:
      #     context: .
      #     dockerfile: Dockerfilekerfile
@@ -223,33 +233,76 @@ To deploy the URL Shortener application on your cloud environment, follow the st
     Comment or uncomment the relevant lines based on whether you want to use the pre-built image from Docker Hub or build from the local Dockerfile.
 
 
-5.  **Deploy Using K8s**
+3.  ***Deploy Using K8s***
 
-*   **Setup Kubernetes Deployment and Service:**
+*   Setup Kubernetes Deployment and Service:
 
      ```plaintext
-     kubectl apply -f shortener-deployment.yaml
-     kubectl apply -f shortener-service.yaml        
+     cd k8s
+     kubectl apply -f deploy.yaml,service.yaml,data.yaml
     ```
 
-*    **Use the following command to monitor the deployment:**
+*   Expose the K8s service:
+
+     ```plaintext
+     kubectl port-forward service/shortener-app 8080:8080   
+    ```
+    Access Application at http://localhost:8080
+    <center>OR</center>
+    If you're using minikube, run the below command to run the app:
+
+    ```plaintext
+     minikube service shortener-app   
+    ```
+    
+*    Use the following command to monitor the deployment:
+
+    ```plaintext
+     kubectl get pods
+    ```
+   
+
+4.  ***Deploy Using Helm Chart***
+
+*   Create Deployment from helm chart named "instance" , with a service named "instance-shortener-chart" :
+
+     ```plaintext
+     cd k8s
+     helm install instance shortener-chart/ --values shortener-chart/values.yaml
+    ```
+
+*   Expose the K8s service:
+
+     ```plaintext
+     kubectl port-forward service/instance-shortener-chart 8080:8080
+    ```
+
+    <center>OR</center>
+    If you're using minikube, run the below command to run the app:**
+
+    ```plaintext
+     minikube service shortener-app   
+    ```
+
+*    Use the following command to monitor the deployment:
 
     ```plaintext
      kubectl get pods
     ```
 
-Wait until the pod is in the "Running" state.
+    Wait until the pod is in the "Running" state.
 
-*   **Access the Application**
+*   Access the Application
 
     Depending on your Kubernetes setup, you might need to get the external IP of the service:
 
     ```plaintext
-     kubectl get service shortener-service
+     kubectl get service instance-shortener-chart
     ```
 
-    Access your application using the provided external IP.
+    Access your application using the provided external IP(from command output) or at : http://localhost:8080.
 
+***
 
 ### SMS Service Configuration
 
@@ -271,16 +324,23 @@ To configure the SMS service, you need to specify parameters related to the SMS 
     selfhosted.gateway.url=https://your-smsgateway-url/index.php
     selfhosted.device.id=your_device_id
     selfhosted.hash=your_device_hash
+
+***
   
 ### App Health
+Check application status from the /monitoring page at :  http://localhost:8080/monitoring
+### Docs
+Check application OpenAPI 3.0 compliant docs at: http://localhost:8080/docs-ui
 
-*   Check application status from the /monitoring page example http://localhost:8080/monitoring
+***
 
 ### Use Cases
 
 1.  Shorten URLs by visiting the URL Shortener page.
 2.  Access analytics for each shortened URL.
 3.  Create and manage bio pages in the Bio section.
+
+***
 
 ### Contributing
 
@@ -289,3 +349,6 @@ Contributions are welcome! Please follow the contribution guidelines.
 ### License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+***
+<p style="text-align: center;">&copy; Bitmutex Technologies | 2024</p>
