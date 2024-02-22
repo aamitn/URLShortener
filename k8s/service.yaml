@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    name.full: "TUSC-The Url Shortener Company"
+  labels:
+    io.kompose.service: shortener-app
+  name: shortener-app
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+ 
+
+  selector:
+    io.kompose.service: shortener-app

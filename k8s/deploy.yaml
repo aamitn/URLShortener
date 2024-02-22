@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    name.full: "TUSC-The Url Shortener Company"
+  labels:
+    io.kompose.service: shortener-app
+  name: shortener-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: shortener-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        name.full: "TUSC-The Url Shortener Company"
+      labels:
+        io.kompose.network/k8s-default: "true"
+        io.kompose.service: shortener-app
+    spec:
+      containers:
+        - image: nmpl/shortener:k8s
+          name: shortener-app
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+            - containerPort: 3306
+              hostPort: 3306
+              protocol: TCP
+
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
