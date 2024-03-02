@@ -14,10 +14,12 @@ ARG TAG=$VERSION
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 
 #Cloud Install :  Clone the repository
-RUN git clone https://github.com/aamitn/URLShortener.git
+#RUN git clone https://github.com/aamitn/URLShortener.git
+
+RUN mkdir -p URLShortener
 
 #Local Install
-#ADD . /UrlShortener
+ADD . /URLShortener
 
 # Change working directory to the repo directory
 WORKDIR /URLShortener
@@ -26,7 +28,7 @@ WORKDIR /URLShortener
 # Example real world db access url : mysql://127.0.0.1:3306
 # Example Docker  db access url : mysql://database:3306 (container name is datbase)
 # Change the database ip in app config to the database docker container name/service
-RUN sed -i "s|database.ip=127.0.0.1|database.ip=database |g" src/main/resources/application.properties
+RUN sed -i "s|database.ip=127.0.0.1|database.ip=database|g" src/main/resources/application.properties
 
 # Build the application
 RUN mvn clean install

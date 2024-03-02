@@ -4,7 +4,6 @@ services:
   shortener-app:
     labels:
       - "TUSC"
-
     #Build from docker hub image .Comment/Uncomment Below
     image: nmpl/shortener:k8s
 
@@ -15,12 +14,9 @@ services:
     ports:
       - "8080:8080"
       - "3306:3306"
-
     volumes:
       - data:/var/lib/mysql
-
     restart: unless-stopped
-
 
 volumes:
   data:
